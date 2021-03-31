@@ -9,6 +9,9 @@
 #'
 #' @return Cell numbers of all visible cells of the DSM. 
 #' @export
+#' 
+#' @importFrom Rcpp sourceCpp
+#' @useDynLib GVI, .registration = TRUE
 
 LoS <- function(rc1, r0, c0, dsm_mat, observerHeight) {
   # End points
