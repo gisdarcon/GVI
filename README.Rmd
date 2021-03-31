@@ -1,8 +1,7 @@
 ---
+title: 'GVI --- Work in Progress'
 output: github_document
 ---
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -13,17 +12,30 @@ knitr::opts_chunk$set(
 )
 ```
 
-# GVI
+`GVI` is a R package to calculate a Green Visibility Index (GVI) surface from a DSM, DTM and Greenness Surface. `GVI` is written in C++ to provide fast and light weighted functionality.
 
-<!-- badges: start -->
-<!-- badges: end -->
-
-`GVI` is a package to calculate a Green Visibility Index (GVI) surface from a DSM, DTM and Greenness Surface. `GVI` is written in C++ to provide a very fast and light weighted functionality.
-
-## Installation
+# Installation
 
 You can install the latest version of `GVI` from GitHub with:
 
 ``` r
 remotes::install_git("https://github.com/STBrinkmann/GVI")
 ```
+
+# Methods
+- describe methods
+- provide examples
+
+# About
+## Package contributors
+Brinkmann, Sebastian (Package creator and author)
+e-mail: sebastian.brinkmann@fau.de
+
+## Thesis authors
+- add authors of the paper
+
+# Bibliography
+
+# ToDO
+- Package dependencies
+- Implement function to calculate weighed GVI
