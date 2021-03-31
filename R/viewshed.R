@@ -1,5 +1,19 @@
-viewshed <- function(sf_start, max_distance, dsm_data, dtm_data, resolution, 
-                     observer_height, plot = FALSE) {
+#' @title Viewshed
+#' @description Computes the viewshed of a point on a Digital Surface Model map.
+#'
+#' @param sf_start object of class \code{sf} with one point; Starting location
+#' @param max_distance numeric; Buffer distance to calculate the viewshed 
+#' @param dsm_data object of class \code{\link[terra]{SpatRaster}}; \code{\link[terra]{SpatRaster}} of the DSM
+#' @param dtm_data object of class \code{\link[terra]{SpatRaster}}; \code{\link[terra]{SpatRaster}} of the DTM
+#' @param observer_height numeric > 0; Height of the observer (e.g. 1.8)
+#' @param resolution optional; numeric > 1; Resolution that the GVI should be aggregated to. 
+#' @param plot optional; Plot DSM and GVI
+#'
+#' @return object of class \code{\link[terra]{SpatRaster}}
+#' @export
+#'
+viewshed <- function(sf_start, max_distance, dsm_data, dtm_data,
+                     observer_height, resolution = NULL, plot = FALSE) {
   
   # AOI
   this_aoi <- sf_start %>% 
@@ -15,18 +29,18 @@ viewshed <- function(sf_start, max_distance, dsm_data, dtm_data, resolution,
   # If the resolution parameter differs from the input-DSM resolution,
   # resample the DSM to the lower resolution.
   # Also, convert dsm_data_masked to "Raster" object, for faster internal calculation.
-  if ((res(dsm_data)[1] != resolution) & (resolution >= 1)) {
+  if (is.null(resolution)) {
+    dsm_data_masked <- terra::crop(dsm_data, this_aoi) %>% 
+      terra::mask(terra::vect(this_aoi))
+    
+    output <- terra::setValues(dsm_data_masked, 0) %>% 
+      terra::mask(dsm_data_masked)
+  } else {
     dsm_data_masked <- terra::crop(dsm_data, this_aoi) %>% 
       terra::aggregate(fact = resolution/terra::res(.)) %>% 
       terra::mask(terra::vect(this_aoi))
     
     output <- terra::setValues(dsm_data_masked, 0) %>%
-      terra::mask(dsm_data_masked)
-  } else {
-    dsm_data_masked <- terra::crop(dsm_data, this_aoi) %>% 
-      terra::mask(terra::vect(this_aoi))
-    
-    output <- terra::setValues(dsm_data_masked, 0) %>% 
       terra::mask(dsm_data_masked)
   }
   
