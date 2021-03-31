@@ -11,7 +11,24 @@
 #'
 #' @return object of class \code{\link[terra]{SpatRaster}}
 #' @export
-#'
+#' 
+#' @importFrom magrittr %>%
+#' @importFrom sf st_buffer
+#' @importFrom sf st_coordinates
+#' @importFrom terra extract
+#' @importFrom terra res
+#' @importFrom terra crop
+#' @importFrom terra mask
+#' @importFrom terra vect
+#' @importFrom terra aggregate
+#' @importFrom terra rowFromY
+#' @importFrom terra colFromX
+#' @importFrom terra values
+#' @importFrom terra ncol
+#' @importFrom terra expand
+#' @importFrom terra boundaries
+#' @importFrom terra xyFromCell
+#' @importFrom terra plot
 viewshed <- function(sf_start, max_distance, dsm_data, dtm_data,
                      observer_height, resolution = NULL, plot = FALSE) {
   
@@ -29,16 +46,21 @@ viewshed <- function(sf_start, max_distance, dsm_data, dtm_data,
   # If the resolution parameter differs from the input-DSM resolution,
   # resample the DSM to the lower resolution.
   # Also, convert dsm_data_masked to "Raster" object, for faster internal calculation.
-  if (is.null(resolution) || resolution == terra::res(dsm_data)) {
+  if (is.null(resolution)) {
+    resolution = terra::res(dsm_data)
+  }
+  if (resolution == terra::res(dsm_data)) {
     dsm_data_masked <- terra::crop(dsm_data, this_aoi) %>% 
       terra::mask(terra::vect(this_aoi))
     
     output <- terra::setValues(dsm_data_masked, 0) %>% 
       terra::mask(dsm_data_masked)
   } else {
+    terra::terraOptions(progress = 0)
     dsm_data_masked <- terra::crop(dsm_data, this_aoi) %>% 
       terra::aggregate(fact = resolution/terra::res(.)) %>% 
       terra::mask(terra::vect(this_aoi))
+    terra::terraOptions(progress = 3)
     
     output <- terra::setValues(dsm_data_masked, 0) %>%
       terra::mask(dsm_data_masked)
