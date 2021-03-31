@@ -21,5 +21,5 @@ LoS(rc1, r0, c0, dsm_mat, observerHeight)
 Cell numbers of all visible cells of the DSM.
 }
 \description{
-Computes a single Line of Sight (LoS) using a Digital Surface Model (DSM) matrix.
+Computes a single Line of Sight (LoS) using a Digital Surface Model (DSM) matrix. Uses a C++ implementation of Bresenham's line algorithm.
 }

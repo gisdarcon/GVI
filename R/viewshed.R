@@ -29,7 +29,7 @@ viewshed <- function(sf_start, max_distance, dsm_data, dtm_data,
   # If the resolution parameter differs from the input-DSM resolution,
   # resample the DSM to the lower resolution.
   # Also, convert dsm_data_masked to "Raster" object, for faster internal calculation.
-  if (is.null(resolution)) {
+  if (is.null(resolution) || resolution == terra::res(dsm_data)) {
     dsm_data_masked <- terra::crop(dsm_data, this_aoi) %>% 
       terra::mask(terra::vect(this_aoi))
     
@@ -66,7 +66,7 @@ viewshed <- function(sf_start, max_distance, dsm_data, dtm_data,
   
   # Apply lineOfSight function on every point in rc1
   this_LoS <- lapply(rc1, GVI::LoS, 
-                     r0 = r0, c0 = c0, dsm_mat = dsm_mat, height0 = height0)
+                     r0 = r0, c0 = c0, dsm_mat = dsm_mat, observerHeight = height0)
   
   # Bind list
   this_LoS <- unlist(this_LoS)
@@ -78,8 +78,8 @@ viewshed <- function(sf_start, max_distance, dsm_data, dtm_data,
   # Compare DSM with Visibilty
   if (plot) {
     par(mfrow=c(1,2))
-    plot(dsm_data_masked); points(x0, y0, col = "red", pch = 20, cex = 2)
-    plot(output, legend = F); points(x0, y0, col = "red", pch = 20, cex = 2)
+    terra::plot(dsm_data_masked, legend = F); points(x0, y0, col = "red", pch = 20, cex = 2)
+    terra::plot(output, legend = F); points(x0, y0, col = "red", pch = 20, cex = 2)
     par(mfrow=c(1,1))
   }
   return(output)
