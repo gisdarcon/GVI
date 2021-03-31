@@ -8,7 +8,11 @@ Maintainer: Sebastian Brinkmann <sebastian.brinkmann@fau.de>
 Description: Uses a R Viewshed implementation to calculate a GVI surface from a DSM, DTM and Greenness Surface.
 License: GPL (>= 2)
 Encoding: UTF-8
-Imports: Rcpp (>= 1.0.6)
+Imports: 
+    magrittr,
+    Rcpp,
+    sf,
+    terra
 LinkingTo: Rcpp
 RoxygenNote: 7.1.1
 URL: https://github.com/STBrinkmann/GVI
