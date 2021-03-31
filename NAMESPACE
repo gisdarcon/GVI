@@ -1,0 +1,4 @@
+useDynLib(GVI, .registration=TRUE)
+importFrom(Rcpp, evalCpp)
+export("LoS")
+export("viewshed")
