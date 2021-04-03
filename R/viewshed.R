@@ -29,8 +29,9 @@
 #' @importFrom terra boundaries
 #' @importFrom terra xyFromCell
 #' @importFrom terra plot
-viewshed <- function(sf_start, max_distance, dsm_data, dtm_data,
-                     observer_height, resolution = NULL, plot = FALSE) {
+viewshed <- function(sf_start, dsm_data, dtm_data, 
+                     max_distance = 800, observer_height = 1.7, 
+                     resolution = NULL, plot = FALSE) {
   
   # AOI
   this_aoi <- sf_start %>% 
@@ -47,9 +48,9 @@ viewshed <- function(sf_start, max_distance, dsm_data, dtm_data,
   # resample the DSM to the lower resolution.
   # Also, convert dsm_data_masked to "Raster" object, for faster internal calculation.
   if (is.null(resolution)) {
-    resolution = terra::res(dsm_data)
+    resolution = min(terra::res(dsm_data))
   }
-  if (resolution == terra::res(dsm_data)) {
+  if (resolution == min(terra::res(dsm_data))) {
     dsm_data_masked <- terra::crop(dsm_data, this_aoi) %>% 
       terra::mask(terra::vect(this_aoi))
     

@@ -6,10 +6,10 @@
 \usage{
 viewshed(
   sf_start,
-  max_distance,
   dsm_data,
   dtm_data,
-  observer_height,
+  max_distance = 800,
+  observer_height = 1.7,
   resolution = NULL,
   plot = FALSE
 )
@@ -17,11 +17,11 @@ viewshed(
 \arguments{
 \item{sf_start}{object of class \code{sf} with one point; Starting location}
 
-\item{max_distance}{numeric; Buffer distance to calculate the viewshed}
-
 \item{dsm_data}{object of class \code{\link[terra]{SpatRaster}}; \code{\link[terra]{SpatRaster}} of the DSM}
 
 \item{dtm_data}{object of class \code{\link[terra]{SpatRaster}}; \code{\link[terra]{SpatRaster}} of the DTM}
+
+\item{max_distance}{numeric; Buffer distance to calculate the viewshed}
 
 \item{observer_height}{numeric > 0; Height of the observer (e.g. 1.8)}
 
