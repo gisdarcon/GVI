@@ -18,7 +18,7 @@ LoS(rc1, r0, c0, dsm_mat, observerHeight)
 \item{observerHeight}{numeric > 0; Height of the observer (e.g. 1.8)}
 }
 \value{
-Cell numbers of all visible cells of the DSM.
+Cell numbers of all visible cells of the DSM along the line.
 }
 \description{
 Computes a single Line of Sight (LoS) using a Digital Surface Model (DSM) matrix. Uses a C++ implementation of Bresenham's line algorithm.

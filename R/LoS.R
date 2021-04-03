@@ -7,7 +7,7 @@
 #' @param dsm_mat integer matrix; Matrix derived from a DSM.
 #' @param observerHeight numeric > 0; Height of the observer (e.g. 1.8)
 #'
-#' @return Cell numbers of all visible cells of the DSM. 
+#' @return Cell numbers of all visible cells of the DSM along the line. 
 #' @export
 #' 
 #' @importFrom Rcpp sourceCpp
