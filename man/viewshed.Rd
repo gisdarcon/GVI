@@ -23,7 +23,7 @@ viewshed(
 
 \item{max_distance}{numeric; Buffer distance to calculate the viewshed}
 
-\item{observer_height}{numeric > 0; Height of the observer (e.g. 1.8)}
+\item{observer_height}{numeric > 0; Height of the observer (e.g. 1.7 meters)}
 
 \item{resolution}{optional; numeric > 1; Resolution that the GVI should be aggregated to.}
 

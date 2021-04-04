@@ -5,7 +5,7 @@
 #' @param max_distance numeric; Buffer distance to calculate the viewshed 
 #' @param dsm_data object of class \code{\link[terra]{SpatRaster}}; \code{\link[terra]{SpatRaster}} of the DSM
 #' @param dtm_data object of class \code{\link[terra]{SpatRaster}}; \code{\link[terra]{SpatRaster}} of the DTM
-#' @param observer_height numeric > 0; Height of the observer (e.g. 1.8)
+#' @param observer_height numeric > 0; Height of the observer (e.g. 1.7 meters)
 #' @param resolution optional; numeric > 1; Resolution that the GVI should be aggregated to. 
 #' @param plot optional; Plot DSM and GVI
 #'
