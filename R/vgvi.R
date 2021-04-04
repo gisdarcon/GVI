@@ -38,14 +38,11 @@ vgvi <- function(viewshed, sf_start, greenspace, m = 0.5, b = 8, mode = c("logit
     cbind(dxy, .)
   colnames(output) <- c("dxy", "visible")
   
-  # Get number of visible cells per distance
-  all_Visible <- stats::aggregate(visible ~ dxy, output, length)
-  
-  # Get number of green visible cells per distance
-  green_Visible <- stats::aggregate(visible ~ dxy, output, sum)
+  # Get number of green visible cells and total visible cells per distance
+  dxyVisibility <- countGroups(xyVisible = output, uniqueXY = unique(output[,1]))
   
   # Proportion of visible green cells
-  raw_GVI <- green_Visible$visible / all_Visible$visible
+  raw_GVI <- dxyVisibility$visibleGreen / dxyVisibility$visibleTotal
   
   # Calculate weights from logistic function
   if (mode == c("logit", "exponential") || mode == "logit") {
@@ -61,7 +58,7 @@ vgvi <- function(viewshed, sf_start, greenspace, m = 0.5, b = 8, mode = c("logit
   }
   
   # Normalize distance
-  n <- all_Visible$dxy / max(all_Visible$dxy)
+  n <- dxyVisibility$dxy / max(dxyVisibility$dxy)
   
   # Calculate weights by taking the proportion of the integral of each step from the integral of the whole area. 
   big_integral <- stats::integrate(logfun, lower = 0, upper = 1)$value
