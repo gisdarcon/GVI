@@ -19,6 +19,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// countGroups
+List countGroups(IntegerMatrix xyVisible, IntegerVector uniqueXY);
+RcppExport SEXP _GVI_countGroups(SEXP xyVisibleSEXP, SEXP uniqueXYSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerMatrix >::type xyVisible(xyVisibleSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type uniqueXY(uniqueXYSEXP);
+    rcpp_result_gen = Rcpp::wrap(countGroups(xyVisible, uniqueXY));
+    return rcpp_result_gen;
+END_RCPP
+}
 // isVisible
 LogicalVector isVisible(NumericVector x);
 RcppExport SEXP _GVI_isVisible(SEXP xSEXP) {
@@ -48,6 +60,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_GVI_bresenham", (DL_FUNC) &_GVI_bresenham, 4},
+    {"_GVI_countGroups", (DL_FUNC) &_GVI_countGroups, 2},
     {"_GVI_isVisible", (DL_FUNC) &_GVI_isVisible, 1},
     {"_GVI_tangents", (DL_FUNC) &_GVI_tangents, 5},
     {NULL, NULL, 0}
