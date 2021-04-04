@@ -88,6 +88,10 @@ vgvi(viewshed = viewshed1, sf_start = observer, greenspace = GreenSpace, m = 0.5
 
 The output of 0.86 indicates, that \~86% of the visible area, within a 300 meters radius, is green.
 
+```{r echo=FALSE}
+unlink(tar.dir)
+```
+
 # About
 
 ## Package contributors
@@ -114,4 +118,4 @@ Labib, S.M., Jonny J. Huck, and Sarah Lindley (2021): Modelling and Mapping Eye-
 
 -   ~~Code examples~~
 
--   C++ implementation of `vgvi` function
+-   ~~C++ implementation of `vgvi` function~~

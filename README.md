@@ -150,4 +150,4 @@ at High Spatial Resolutions. *Science of The Total Environment* 755
 
 -   ~~Code examples~~
 
--   C++ implementation of `vgvi` function
+-   ~~C++ implementation of `vgvi` function~~
