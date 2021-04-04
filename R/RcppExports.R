@@ -5,6 +5,10 @@ bresenham <- function(x1, y1, x2, y2) {
     .Call(`_GVI_bresenham`, x1, y1, x2, y2)
 }
 
+countGroups <- function(xyVisible, uniqueXY) {
+    .Call(`_GVI_countGroups`, xyVisible, uniqueXY)
+}
+
 isVisible <- function(x) {
     .Call(`_GVI_isVisible`, x)
 }
