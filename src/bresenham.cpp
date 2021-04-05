@@ -38,8 +38,8 @@ IntegerVector bresenham(int x1, int y1, int x2, int y2)
   if(Dx > Dy) {   
     //# Main loop
     for(int I=0; I<=D; I++) {   
-      out[2*I] = X;
-      out[2*I+1] = Y;
+      out[2*I] = Y;
+      out[2*I+1] = X;
       
       //# Update (X, Y) and R
       X+= Sx; R+= Dy; //# Lateral move
@@ -51,8 +51,8 @@ IntegerVector bresenham(int x1, int y1, int x2, int y2)
   } else {   
     //# Main loop
     for(int I=0; I<=D; I++) {     
-      out[2*I] = X;
-      out[2*I+1] = Y;
+      out[2*I] = Y;
+      out[2*I+1] = X;
       
       //# Update (X, Y) and R
       Y+= Sy; R+= Dx; //# Lateral move
