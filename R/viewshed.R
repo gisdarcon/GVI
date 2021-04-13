@@ -29,6 +29,8 @@
 #' @importFrom terra boundaries
 #' @importFrom terra xyFromCell
 #' @importFrom terra plot
+#' @importFrom Rcpp sourceCpp
+#' @useDynLib GVI, .registration = TRUE
 viewshed <- function(sf_start, dsm_data, dtm_data, 
                      max_distance = 800, observer_height = 1.7, 
                      resolution = NULL, plot = FALSE) {
@@ -84,21 +86,15 @@ viewshed <- function(sf_start, dsm_data, dtm_data,
   
   # Row/Col of boundary cells
   rc1 <- cbind(terra::rowFromY(output, xy1[,2]), 
-               terra::colFromX(output, xy1[,1])) %>% 
-    split(seq(nrow(.)))
+               terra::colFromX(output, xy1[,1]))
   
-  # Apply lineOfSight function on every point in rc1
-  this_LoS <- lapply(rc1, GVI::LoS, 
-                     r0 = r0, c0 = c0, dsm_mat = dsm_mat, observerHeight = height0)
+  # Apply lineOfSight (C++) function on every point in rc1
+  this_LoS <- LoSCpp(rc1 = rc1, r0 = r0, c0 = c0, observerHeight = height0, dsm_mat = dsm_mat)
   
-  # Bind list
-  this_LoS <- unlist(this_LoS)
-  
-  # Copy result of lapply to the output raster
-  #output[this_LoS[,1]] <- this_LoS[,2]
+  # Copy result of lineOfSight to the output raster
   output[this_LoS] <- 1
   
-  # Compare DSM with Visibilty
+  # Compare DSM with Visibility
   if (plot) {
     par(mfrow=c(1,2))
     terra::plot(dsm_data_masked, legend = F); points(x0, y0, col = "red", pch = 20, cex = 2)
