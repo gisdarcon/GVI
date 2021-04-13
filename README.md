@@ -1,6 +1,18 @@
 GVI — Work in Progress
 ================
 
+-   [Installation](#installation)
+-   [Methods](#methods)
+    -   [Viewshed](#viewshed)
+    -   [Viewshed Greenness Visibility Index
+        (VGVI)](#viewshed-greenness-visibility-index-vgvi)
+-   [Examples](#examples)
+-   [About](#about)
+    -   [Package contributors](#package-contributors)
+    -   [Thesis authors](#thesis-authors)
+-   [Bibliography](#bibliography)
+-   [ToDO](#todo)
+
 `GVI` is a R package to calculate a Green Visibility Index (GVI) surface
 from a DSM, DTM and Greenness Surface as demonstrated by [Labib, Huck
 and Lindley (2021)](https://doi.org/10.1016/j.scitotenv.2020.143050).
@@ -15,6 +27,13 @@ GitHub with:
 
 ``` r
 remotes::install_git("https://github.com/STBrinkmann/GVI")
+```
+
+If the `remotes` has not been installed yet, install the released
+version of remotes from CRAN:
+
+``` r
+install.packages("remotes")
 ```
 
 # Methods
@@ -39,8 +58,30 @@ the visible cells are green.
 A decay function is applied, to account for the reducing visual
 prominence of an object in space with increasing distance from the
 observer. Currently two options are supported, a logistic and an
-exponential function. The `visualizeWeights` function helps setting the
-parameters *m* and *b*.
+exponential function.
+
+![
+\\begin{align\*}
+  f(x) =
+    \\cfrac{1}{1 + e^{ \\,b \\,(x-m)}}
+    && \\text{(logistic)}\\\\
+  f(x) =
+    \\cfrac{1}{1 + (bx^{\\,m})}
+    && \\text{(exponential)}
+\\end{align\*}
+](https://latex.codecogs.com/svg.latex?%0A%5Cbegin%7Balign%2A%7D%0A%20%20f%28x%29%20%3D%0A%20%20%20%20%5Ccfrac%7B1%7D%7B1%20%2B%20e%5E%7B%20%5C%2Cb%20%5C%2C%28x-m%29%7D%7D%0A%20%20%20%20%26%26%20%5Ctext%7B%28logistic%29%7D%5C%5C%0A%20%20f%28x%29%20%3D%0A%20%20%20%20%5Ccfrac%7B1%7D%7B1%20%2B%20%28bx%5E%7B%5C%2Cm%7D%29%7D%0A%20%20%20%20%26%26%20%5Ctext%7B%28exponential%29%7D%0A%5Cend%7Balign%2A%7D%0A "
+\begin{align*}
+  f(x) =
+    \cfrac{1}{1 + e^{ \,b \,(x-m)}}
+    && \text{(logistic)}\\
+  f(x) =
+    \cfrac{1}{1 + (bx^{\,m})}
+    && \text{(exponential)}
+\end{align*}
+")
+
+The `visualizeWeights()` function helps setting the parameters *m* and
+*b*.
 
 ![](docs/visualizeWeights.png)
 
@@ -63,17 +104,20 @@ tutorial. To reduce the size of the R package, the data has been
 uploaded to GoogleDrive and needs to be downloaded first.
 
 ``` r
-# build a temporary folder on disk
-temp <- tempfile(fileext = ".tar.xz")
-download.url <- "https://drive.google.com/uc?export=download&id=1Qb1bSh-ivWR7vZalxGQZw0JhIMVRKcN6"
+# Download DEM
+DEM_tmp <- tempfile(fileext = ".tif")
+download.file(url = "https://github.com/STBrinkmann/data/raw/main/Vancouver_DEM.tif",
+              destfile = DEM_tmp)
 
-## download the file
-download.file(url = download.url, destfile = temp)
-## unzip the file(s)
-tar.dir <- tempdir()
-untar(temp, exdir = tar.dir)
-## close file connection
-unlink(temp)
+# Download DSM
+DSM_tmp <- tempfile(fileext = ".tif")
+download.file(url = "https://github.com/STBrinkmann/data/raw/main/Vancouver_DSM.tif",
+              destfile = DSM_tmp)
+
+# Download GreenSpace
+GS_tmp <- tempfile(fileext = ".tif")
+download.file(url = "https://github.com/STBrinkmann/data/raw/main/Vancouver_GreenSpace.tif",
+              destfile = GS_tmp)
 ```
 
 Load DSM, DEM and Greenspace Mask, and generate the observer location as
@@ -84,9 +128,9 @@ library(terra)
 library(sf)
 library(sfheaders)
 
-DSM <- rast(file.path(tar.dir, "Vancouver_DSM.tif"))
-DEM <- rast(file.path(tar.dir, "Vancouver_DEM.tif"))
-GreenSpace <- rast(file.path(tar.dir, "Vancouver_GreenSpace.tif"))
+DEM <- rast(DEM_tmp)
+DSM <- rast(DSM_tmp)
+GreenSpace <- rast(GS_tmp)
 
 observer <- st_sf(sf_point(c(487616.2, 5455970)), crs = st_crs(26910))
 ```
@@ -119,12 +163,26 @@ The output of 0.86 indicates, that \~86% of the visible area, within a
 
 ## Package contributors
 
-Brinkmann, Sebastian (Package creator and package author) e-mail:
+Brinkmann, Sebastian (Creator and author) e-mail:
 <sebastian.brinkmann@fau.de>
+
+S.M. Labib (Author) e-mail: <sml80@medschl.cam.ac.uk>
 
 ## Thesis authors
 
--   add authors of the paper
+S.M. Labib (1, 2\*)  
+Jonny J. Huck (1)  
+Sarah Lindley (1)
+
+1: Department of Geography, School of Environment, Education and
+Development (SEED), University of Manchester, Arthur Lewis building (1st
+Floor), Oxford Road, Manchester M13 9PL, United Kingdom.
+
+2: Centre for Diet and Activity Research (CEDAR), MRC Epidemiology Unit,
+University of Cambridge, Clifford Allbutt Building, CB2 0AH, Cambridge,
+United Kingdom.
+
+\*corresponding author
 
 # Bibliography
 
@@ -144,10 +202,14 @@ at High Spatial Resolutions. *Science of The Total Environment* 755
 
 # ToDO
 
--   ~~Package dependencies~~
+-   ~~Thesis author section~~
 
--   ~~Implement function to calculate weighed GVI~~
+-   ~~library(devtools)~~
 
--   ~~Code examples~~
+-   ~~Sample data~~
 
--   ~~C++ implementation of `vgvi` function~~
+-   Rework decay function
+
+-   Input check for all functions
+
+-   VGVI for multiple points, lines and polygons
