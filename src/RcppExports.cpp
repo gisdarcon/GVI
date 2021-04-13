@@ -5,17 +5,18 @@
 
 using namespace Rcpp;
 
-// bresenham
-IntegerVector bresenham(int x1, int y1, int x2, int y2);
-RcppExport SEXP _GVI_bresenham(SEXP x1SEXP, SEXP y1SEXP, SEXP x2SEXP, SEXP y2SEXP) {
+// LoSCpp
+std::vector<int> LoSCpp(const IntegerMatrix rc1, const int r0, const int c0, const double observerHeight, const NumericMatrix dsm_mat);
+RcppExport SEXP _GVI_LoSCpp(SEXP rc1SEXP, SEXP r0SEXP, SEXP c0SEXP, SEXP observerHeightSEXP, SEXP dsm_matSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type x1(x1SEXP);
-    Rcpp::traits::input_parameter< int >::type y1(y1SEXP);
-    Rcpp::traits::input_parameter< int >::type x2(x2SEXP);
-    Rcpp::traits::input_parameter< int >::type y2(y2SEXP);
-    rcpp_result_gen = Rcpp::wrap(bresenham(x1, y1, x2, y2));
+    Rcpp::traits::input_parameter< const IntegerMatrix >::type rc1(rc1SEXP);
+    Rcpp::traits::input_parameter< const int >::type r0(r0SEXP);
+    Rcpp::traits::input_parameter< const int >::type c0(c0SEXP);
+    Rcpp::traits::input_parameter< const double >::type observerHeight(observerHeightSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix >::type dsm_mat(dsm_matSEXP);
+    rcpp_result_gen = Rcpp::wrap(LoSCpp(rc1, r0, c0, observerHeight, dsm_mat));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -31,38 +32,10 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// isVisible
-LogicalVector isVisible(NumericVector x);
-RcppExport SEXP _GVI_isVisible(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(isVisible(x));
-    return rcpp_result_gen;
-END_RCPP
-}
-// tangents
-NumericVector tangents(int x1, int y1, double height0, IntegerVector xy2, NumericVector dsm_profile);
-RcppExport SEXP _GVI_tangents(SEXP x1SEXP, SEXP y1SEXP, SEXP height0SEXP, SEXP xy2SEXP, SEXP dsm_profileSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type x1(x1SEXP);
-    Rcpp::traits::input_parameter< int >::type y1(y1SEXP);
-    Rcpp::traits::input_parameter< double >::type height0(height0SEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type xy2(xy2SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type dsm_profile(dsm_profileSEXP);
-    rcpp_result_gen = Rcpp::wrap(tangents(x1, y1, height0, xy2, dsm_profile));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_GVI_bresenham", (DL_FUNC) &_GVI_bresenham, 4},
+    {"_GVI_LoSCpp", (DL_FUNC) &_GVI_LoSCpp, 5},
     {"_GVI_countGroups", (DL_FUNC) &_GVI_countGroups, 2},
-    {"_GVI_isVisible", (DL_FUNC) &_GVI_isVisible, 1},
-    {"_GVI_tangents", (DL_FUNC) &_GVI_tangents, 5},
     {NULL, NULL, 0}
 };
 
