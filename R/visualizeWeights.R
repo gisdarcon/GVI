@@ -20,7 +20,7 @@ visualizeWeights <- function(viewshed, m = 0.5, b = 8, mode = c("logit", "expone
     terra::xyFromCell(which(viewshed[] == 1))
   
   # Calculate maximum distance
-  max_dist = max(round(sqrt((st_coordinates(sf_start)[1] - xy[,1])^2 + (st_coordinates(sf_start)[2] - xy[,2])^2)))
+  max_dist = (terra::nrow(viewshed)/2) * res(viewshed)[1]
   
   if (mode == c("logit", "exponential") || mode == "logit") {
     logfun <- function(x){

@@ -4,27 +4,18 @@
 \alias{vgvi}
 \title{Viewshed Greenness Visibility Index (VGVI)}
 \usage{
-vgvi(
-  viewshed,
-  sf_start,
-  greenspace,
-  m = 0.5,
-  b = 8,
-  mode = c("logit", "exponential")
-)
+vgvi(viewshed, greenspace, m = 0.5, b = 8, mode = c("logit", "exponential"))
 }
 \arguments{
-\item{viewshed}{object of class \code{\link[terra]{SpatRaster}}; \code{\link[terra]{SpatRaster}} of the \code{\link[GVI]{viewshed}}.}
+\item{viewshed}{object of class \code{\link[terra]{SpatRaster}}; \code{\link[terra]{SpatRaster}} of the \code{\link[GVI]{viewshed}}}
 
-\item{sf_start}{object of class \code{sf} with one point; Starting location.}
+\item{greenspace}{object of class \code{\link[terra]{SpatRaster}}; Binary \code{\link[terra]{SpatRaster}} of the Greenspace mask. Values must be 1 for Green and 0 for No-Green}
 
-\item{greenspace}{object of class \code{\link[terra]{SpatRaster}}; Binary \code{\link[terra]{SpatRaster}} of the Greenspace mask. Values must be 1 for Green and 0 for No-Green.}
+\item{m}{numeric; See ‘Details’}
 
-\item{m}{numeric; See ‘Details’.}
+\item{b}{numeric; See ‘Details’}
 
-\item{b}{numeric; See ‘Details’.}
-
-\item{mode}{character; 'logit' or 'exponential'. See ‘Details’.}
+\item{mode}{character; 'logit' or 'exponential'. See ‘Details’}
 }
 \value{
 numeric; Weighted VGVI, where 0 = no green cells are visible, and 1 = all of the visible cells are green.
