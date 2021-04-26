@@ -25,7 +25,7 @@ viewshed(
 
 \item{observer_height}{numeric > 0; Height of the observer (e.g. 1.7 meters)}
 
-\item{resolution}{optional; numeric > 1; Resolution that the GVI should be aggregated to.}
+\item{resolution}{optional; numeric >= 1; Resolution that the GVI should be aggregated to}
 
 \item{plot}{optional; Plot DSM and GVI}
 }
