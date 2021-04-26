@@ -18,12 +18,12 @@ light weighted functionality.
 
 # Functions
 
-| Function                                                                  | Description                                                                               |
-|---------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
-| [*viewshed*](https://github.com/STBrinkmann/GVI#viewshed)                 | Computes the viewshed of a single point on a Digital Surface Model map                    |
-| [*vgvi*](https://github.com/STBrinkmann/GVI#vgvi)                         | Computes the Viewshed Greenness Visibility Index (VGVI) based on a viewshed               |
-| [*visualizeWeights*](https://github.com/STBrinkmann/GVI#visualizeWeights) | Helper function, to adjust spatial weight parameters in the *vgvi* function               |
-| [*vgvi\_from\_sf*](https://github.com/STBrinkmann/GVI#vgvi_from_sf)       | Combines the *viewshed* and *vgvi* functions; Supports multiple points, lines or polygons |
+| Function                                                                                                | Description                                                                               |
+|---------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
+| [*viewshed*](https://github.com/STBrinkmann/GVI#viewshed)                                               | Computes the viewshed of a single point on a Digital Surface Model map                    |
+| [*vgvi*](https://github.com/STBrinkmann/GVI#viewshed-greenness-visibility-index-vgvi)                   | Computes the Viewshed Greenness Visibility Index (VGVI) based on a viewshed               |
+| [*visualizeWeights*](https://github.com/STBrinkmann/GVI#visualize-weights)                              | Helper function, to adjust spatial weight parameters in the *vgvi* function               |
+| [*vgvi\_from\_sf*](https://github.com/STBrinkmann/GVI#viewshed-greenness-visibility-index-vgvi-from-sf) | Combines the *viewshed* and *vgvi* functions; Supports multiple points, lines or polygons |
 
 # Installation
 
@@ -70,7 +70,17 @@ prominence of an object in space with increasing distance from the
 observer. Currently two options are supported, a logistic and an
 exponential function.
 
-![ \\\\begin{align\*} f(x) = \\\\cfrac{1}{1 + e^{ ,b ,(x-m)}} && \\\\text{(logistic)}\\\\ f(x) = \\\\cfrac{1}{1 + (bx^{,m})} && \\\\text{(exponential)} \\\\end{align\*} ](https://latex.codecogs.com/svg.latex?%20%5C%5Cbegin%7Balign%2A%7D%20f%28x%29%20%3D%20%5C%5Ccfrac%7B1%7D%7B1%20%2B%20e%5E%7B%20%2Cb%20%2C%28x-m%29%7D%7D%20%26%26%20%5C%5Ctext%7B%28logistic%29%7D%5C%5C%20f%28x%29%20%3D%20%5C%5Ccfrac%7B1%7D%7B1%20%2B%20%28bx%5E%7B%2Cm%7D%29%7D%20%26%26%20%5C%5Ctext%7B%28exponential%29%7D%20%5C%5Cend%7Balign%2A%7D%20 " \\begin{align*} f(x) = \\cfrac{1}{1 + e^{ ,b ,(x-m)}} && \\text{(logistic)}\\ f(x) = \\cfrac{1}{1 + (bx^{,m})} && \\text{(exponential)} \\end{align*} ")
+![ 
+\\begin{align\*} 
+  f(x) = \\cfrac{1}{1 + e^{b(x-m)}} && \\text{(logistic)}\\\\
+  f(x) = \\cfrac{1}{1 + (bx^{m})} && \\text{(exponential)}
+\\end{align\*} 
+](https://latex.codecogs.com/svg.latex?%20%0A%5Cbegin%7Balign%2A%7D%20%0A%20%20f%28x%29%20%3D%20%5Ccfrac%7B1%7D%7B1%20%2B%20e%5E%7Bb%28x-m%29%7D%7D%20%26%26%20%5Ctext%7B%28logistic%29%7D%5C%5C%0A%20%20f%28x%29%20%3D%20%5Ccfrac%7B1%7D%7B1%20%2B%20%28bx%5E%7Bm%7D%29%7D%20%26%26%20%5Ctext%7B%28exponential%29%7D%0A%5Cend%7Balign%2A%7D%20%0A " 
+\begin{align*} 
+  f(x) = \cfrac{1}{1 + e^{b(x-m)}} && \text{(logistic)}\\
+  f(x) = \cfrac{1}{1 + (bx^{m})} && \text{(exponential)}
+\end{align*} 
+")
 
 ## Visualize Weights
 

@@ -27,12 +27,12 @@ The `GVI` R package helps researchers to calculate the Green Visibility Index (G
 
 # Functions
 
-| Function                                                                  | Description                                                                               |
-|---------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
-| [*viewshed*](https://github.com/STBrinkmann/GVI#viewshed)                 | Computes the viewshed of a single point on a Digital Surface Model map                    |
-| [*vgvi*](https://github.com/STBrinkmann/GVI#vgvi)                         | Computes the Viewshed Greenness Visibility Index (VGVI) based on a viewshed               |
-| [*visualizeWeights*](https://github.com/STBrinkmann/GVI#visualizeWeights) | Helper function, to adjust spatial weight parameters in the *vgvi* function               |
-| [*vgvi_from_sf*](https://github.com/STBrinkmann/GVI#vgvi_from_sf)         | Combines the *viewshed* and *vgvi* functions; Supports multiple points, lines or polygons |
+| Function                                                                                              | Description                                                                               |
+|-------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|
+| [*viewshed*](https://github.com/STBrinkmann/GVI#viewshed)                                             | Computes the viewshed of a single point on a Digital Surface Model map                    |
+| [*vgvi*](https://github.com/STBrinkmann/GVI#viewshed-greenness-visibility-index-vgvi)                 | Computes the Viewshed Greenness Visibility Index (VGVI) based on a viewshed               |
+| [*visualizeWeights*](https://github.com/STBrinkmann/GVI#visualize-weights)                            | Helper function, to adjust spatial weight parameters in the *vgvi* function               |
+| [*vgvi_from_sf*](https://github.com/STBrinkmann/GVI#viewshed-greenness-visibility-index-vgvi-from-sf) | Combines the *viewshed* and *vgvi* functions; Supports multiple points, lines or polygons |
 
 # Installation
 
@@ -62,7 +62,12 @@ The VGVI expresses the proportion of visible greenness to the total visible area
 
 A decay function is applied, to account for the reducing visual prominence of an object in space with increasing distance from the observer. Currently two options are supported, a logistic and an exponential function.
 
-$$ \\begin{align*} f(x) = \\cfrac{1}{1 + e^{ ,b ,(x-m)}} && \\text{(logistic)}\\ f(x) = \\cfrac{1}{1 + (bx^{,m})} && \\text{(exponential)} \\end{align*} $$
+$$ 
+\begin{align*} 
+  f(x) = \cfrac{1}{1 + e^{b(x-m)}} && \text{(logistic)}\\
+  f(x) = \cfrac{1}{1 + (bx^{m})} && \text{(exponential)}
+\end{align*} 
+$$
 
 ## Visualize Weights
 
