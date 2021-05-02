@@ -178,12 +178,16 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
     if (cores > 1) {
       if (Sys.info()[["sysname"]] == "Windows") {
         cl <- parallel::makeCluster(cores)
-        parallel::clusterExport(cl, "rasterprofile")
-        parallel::clusterEvalQ(cl, library("dplyr"))
+        parallel::clusterExport(cl, c("this_aoi", "dsm_data", "this_x0", "this_y0", 
+                                      "this_height_0_vec", "resolution", "this_ids"))
+        parallel::clusterEvalQ(cl, {
+          library(magrittr)
+          library(GVI)
+        })
         viewshed_list <- parallel::parLapply(cl, this_aoi, fun = function(i){
           viewshed_raster(this_aoi = this_aoi[i,], dsm_data = dsm_data,
-                          x0 = this_x0[i], y0 = this_y0[i], height0 = this_height_0_vec[i],
-                          resolution = resolution, id = this_ids[i])})
+                           x0 = this_x0[i], y0 = this_y0[i], height0 = this_height_0_vec[i],
+                           resolution = resolution, id = this_ids[i])})
         parallel::stopCluster(cl)
       }
       else {
@@ -233,8 +237,11 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
     if (cores > 1) {
       if (Sys.info()[["sysname"]] == "Windows") {
         cl <- parallel::makeCluster(cores)
-        parallel::clusterExport(cl, "rasterprofile")
-        parallel::clusterEvalQ(cl, library("dplyr"))
+        parallel::clusterExport(cl, c("m", "b", "mode"))
+        parallel::clusterEvalQ(cl, {
+          library(magrittr)
+          library(GVI)
+        })
         this_vgvis <- parallel::parLapply(cl, this_XYV_table_list, fun = vgvi_from_XYV_table,
                                           m = m, b = b, mode = mode)
         parallel::stopCluster(cl)
