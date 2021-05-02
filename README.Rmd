@@ -81,7 +81,8 @@ The `vgvi_from_sf` function combines the `viewshed` and `vgvi` functions. The in
 
 # Examples
 
-For the examples we will use a [Digital Elevation Model (DEM)](https://opendata.vancouver.ca/explore/dataset/digital-elevation-model), a binary Greenspace Mask based on a [land cover classification](http://www.metrovancouver.org/data) and a Digital Surface Model (DSM). The DSM is generated from [LiDAR data collected in 2013](https://opendata.vancouver.ca/explore/dataset/lidar-2013/). A detailed explanation on how the DSM has been generated using R is provided in [this](https://geobrinkmann.com/post/visible-greenness-exposure/) tutorial. To reduce the size of the R package, the sample data has been uploaded to a separate GitHub repository and needs to be downloaded first.
+For the examples we will use a [Digital Elevation Model (DEM)](https://opendata.vancouver.ca/explore/dataset/digital-elevation-model), a binary Greenspace Mask based on a [land cover classification](http://www.metrovancouver.org/data) and a Digital Surface Model (DSM). The DSM is generated from [LiDAR data collected in 2013](https://opendata.vancouver.ca/explore/dataset/lidar-2013/). A detailed explanation on how the DSM has been generated using R is provided in [this](https://geobrinkmann.com/post/visible-greenness-exposure/) tutorial. To reduce the size of the R package, the sample data has been uploaded to a separate GitHub repository and needs to be downloaded first.  
+When you are using Windows, you need to download these files manually from the browser. I am trying to solve this issue.
 
 ```{r message=FALSE, warning=FALSE}
 # Download DEM
@@ -102,7 +103,7 @@ download.file(url = "https://github.com/STBrinkmann/data/raw/main/GVI_Data/GVI_G
 
 Load DSM, DEM and Greenspace Mask, and generate the observer location as a `sf` `POINT` feature.
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, eval=FALSE}
 # Load libraries. if one is not installed, use the "install.packages()" function
 library(terra)
 library(sf)
@@ -114,6 +115,19 @@ DSM <- rast(DSM_tmp)
 GreenSpace <- rast(GS_tmp)
 
 # Generate single observer point
+observer <- st_sf(sf_point(c(492243.3, 5454231.4)), crs = st_crs(26910))
+```
+
+```{r include = FALSE}
+library(terra)
+library(sf)
+library(sfheaders)
+library(GVI)
+
+DEM <- rast("C://Dokumente und Einstellungen/Sebastian/Downloads/GVI_DEM.tif")
+DSM <- rast("C://Dokumente und Einstellungen/Sebastian/Downloads/GVI_DSM.tif")
+GreenSpace <- rast("C://Dokumente und Einstellungen/Sebastian/Downloads/GVI_GreenSpace.tif")
+
 observer <- st_sf(sf_point(c(492243.3, 5454231.4)), crs = st_crs(26910))
 ```
 
@@ -144,7 +158,7 @@ isodistance <- read_sf("https://github.com/STBrinkmann/data/raw/main/GVI_Data/is
 
 Compute the VGVI along the line feature. Since the resolution is 5 meters, points along the line feature will be generated every 5 meters.
 
-```{r}
+```{r eval=FALSE}
 vgvi_sf <- vgvi_from_sf(sf_start = isodistance,
                         dsm_data = DSM, dtm_data = DEM, greenspace = GreenSpace, 
                         max_distance = 200, observer_height = 1.7, resolution = 5, 

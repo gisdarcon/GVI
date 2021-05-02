@@ -112,7 +112,9 @@ provided in
 [this](https://geobrinkmann.com/post/visible-greenness-exposure/)
 tutorial. To reduce the size of the R package, the sample data has been
 uploaded to a separate GitHub repository and needs to be downloaded
-first.
+first.  
+When you are using Windows, you need to download these files manually
+from the browser. I am trying to solve this issue.
 
 ``` r
 # Download DEM
@@ -158,7 +160,7 @@ viewshed1 <- viewshed(sf_start = observer, dsm_data = DSM, dtm_data = DEM,
                       max_distance = 200, observer_height = 1.7, plot = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
 
 *Left: Digital Surface Model (DSM); Right: Viewshed, where green =
 visible and yellow = no-visible area.*
