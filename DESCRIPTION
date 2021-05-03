@@ -9,7 +9,9 @@ Description: Uses a R Viewshed implementation to calculate a GVI surface from a 
 License: GPL (>= 2)
 Encoding: UTF-8
 Imports: 
+    doParallel,
     dplyr,
+    foreach,
     graphics,
     magrittr,
     methods,

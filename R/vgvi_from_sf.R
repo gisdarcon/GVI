@@ -63,6 +63,9 @@
 #' @importFrom methods is
 #' @importFrom utils txtProgressBar
 #' @importFrom utils setTxtProgressBar
+#' @importFrom doParallel registerDoParallel
+#' @importFrom foreach foreach
+#' @importFrom foreach %dopar%
 
 vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
                          max_distance = 800, observer_height = 1.7, 
@@ -166,6 +169,10 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
   if (progress) {
     pb = txtProgressBar(min = 0, max = length(max_aoi_list), initial = 0, style = 3)
   }
+  if (cores > 1 && Sys.info()[["sysname"]] == "Windows") {
+    cl <- parallel::makeCluster(cores)
+    doParallel::registerDoParallel(cl)
+  }
   for (j in seq_along(max_aoi_list)) {
     
     this_aoi <- max_aoi_list[[j]]
@@ -177,18 +184,13 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
     #### Calculate viewshed
     if (cores > 1) {
       if (Sys.info()[["sysname"]] == "Windows") {
-        cl <- parallel::makeCluster(cores)
-        parallel::clusterExport(cl, c("this_aoi", "dsm_data", "this_x0", "this_y0", 
-                                      "this_height_0_vec", "resolution", "this_ids"))
-        parallel::clusterEvalQ(cl, {
-          library(magrittr)
-          library(GVI)
-        })
-        viewshed_list <- parallel::parLapply(cl, this_aoi, fun = function(i){
+        par_fun <-  function(i){
           viewshed_raster(this_aoi = this_aoi[i,], dsm_data = dsm_data,
-                           x0 = this_x0[i], y0 = this_y0[i], height0 = this_height_0_vec[i],
-                           resolution = resolution, id = this_ids[i])})
-        parallel::stopCluster(cl)
+                          x0 = this_x0[i], y0 = this_y0[i], height0 = this_height_0_vec[i],
+                          resolution = resolution, id = this_ids[i])
+        }
+        
+        viewshed_list <- foreach::foreach(i=1:nrow(this_aoi)) %dopar% par_fun(i)
       }
       else {
         viewshed_list <- parallel::mclapply(1:nrow(this_aoi), function(i){
@@ -236,15 +238,11 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
     # Compute VGVI
     if (cores > 1) {
       if (Sys.info()[["sysname"]] == "Windows") {
-        cl <- parallel::makeCluster(cores)
-        parallel::clusterExport(cl, c("m", "b", "mode"))
-        parallel::clusterEvalQ(cl, {
-          library(magrittr)
-          library(GVI)
-        })
-        this_vgvis <- parallel::parLapply(cl, this_XYV_table_list, fun = vgvi_from_XYV_table,
-                                          m = m, b = b, mode = mode)
-        parallel::stopCluster(cl)
+        par_fun <-  function(i){
+          vgvi_from_XYV_table(XYV_table = i, m = m, b = b, mode = mode)
+        }
+        
+        this_vgvis <- foreach::foreach(i=this_XYV_table_list) %dopar% par_fun(i)
       }
       else {
         this_vgvis <- parallel::mclapply(this_XYV_table_list, vgvi_from_XYV_table,
@@ -261,6 +259,9 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
     
     # Update ProgressBar
     if (progress) setTxtProgressBar(pb, j)
+  }
+  if (cores > 1 && Sys.info()[["sysname"]] == "Windows") {
+    parallel::stopCluster(cl)
   }
   
   return(sf_start)
