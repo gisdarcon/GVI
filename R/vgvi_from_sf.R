@@ -145,7 +145,7 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
     dplyr::mutate(id = 1:dplyr::n())
   
   # Crop DSM to max AOI and change resolution
-  dsm_data <- terra::crop(dsm_data, max_aoi)
+  dsm_data <- terra::crop(dsm_data, terra::vect(max_aoi))
   
   if(resolution != min(raster::res(dsm_data))) {
     terra::terraOptions(progress = 0)

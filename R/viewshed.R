@@ -42,7 +42,6 @@ viewshed <- function(sf_start, dsm_data, dtm_data,
                      resolution = NULL, plot = FALSE) {
   #### 1. Check input ####
   # sf_start
-  valid_sf_types <- c()
   if (!is(sf_start, "sf")) {
     stop("sf_start must be a sf object")
   } else if (sf::st_crs(sf_start)$units != "m") {
@@ -89,14 +88,14 @@ viewshed <- function(sf_start, dsm_data, dtm_data,
   # If the resolution parameter differs from the input-DSM resolution,
   # resample the DSM to the lower resolution.
   if (resolution == min(terra::res(dsm_data))) {
-    dsm_data_masked <- terra::crop(dsm_data, this_aoi) %>% 
+    dsm_data_masked <- terra::crop(dsm_data, terra::vect(this_aoi)) %>% 
       terra::mask(terra::vect(this_aoi))
     
     output <- terra::setValues(dsm_data_masked, 0) %>% 
       terra::mask(dsm_data_masked)
   } else {
     terra::terraOptions(progress = 0)
-    dsm_data_masked <- terra::crop(dsm_data, this_aoi) %>% 
+    dsm_data_masked <- terra::crop(dsm_data, terra::vect(this_aoi)) %>% 
       terra::aggregate(fact = resolution/terra::res(.)) %>% 
       terra::mask(terra::vect(this_aoi))
     terra::terraOptions(progress = 3)
@@ -115,7 +114,7 @@ viewshed <- function(sf_start, dsm_data, dtm_data,
     matrix(ncol = terra::ncol(dsm_data_masked))
   
   # Calculate boundaries of output raster (boundaries are adjacent to NA values)
-  output_boundaries <- terra::expand(output, resolution*2) %>% 
+  output_boundaries <- terra::extend(output, resolution*2) %>% 
     terra::boundaries()
   
   # Get rows and columns of boundaries cells and convert to list
