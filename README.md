@@ -112,25 +112,23 @@ provided in
 [this](https://geobrinkmann.com/post/visible-greenness-exposure/)
 tutorial. To reduce the size of the R package, the sample data has been
 uploaded to a separate GitHub repository and needs to be downloaded
-first.  
-When you are using Windows, you need to download these files manually
-from the browser. I am trying to solve this issue.
+first.
 
 ``` r
 # Download DEM
 DEM_tmp <- tempfile(fileext = ".tif")
 download.file(url = "https://github.com/STBrinkmann/data/raw/main/GVI_Data/GVI_DEM.tif",
-              destfile = DEM_tmp)
+              destfile = DEM_tmp, mode="wb")
 
 # Download DSM
 DSM_tmp <- tempfile(fileext = ".tif")
 download.file(url = "https://github.com/STBrinkmann/data/raw/main/GVI_Data/GVI_DSM.tif",
-              destfile = DSM_tmp)
+              destfile = DSM_tmp, mode="wb")
 
 # Download GreenSpace
 GS_tmp <- tempfile(fileext = ".tif")
 download.file(url = "https://github.com/STBrinkmann/data/raw/main/GVI_Data/GVI_GreenSpace.tif",
-              destfile = GS_tmp)
+              destfile = GS_tmp, mode="wb")
 ```
 
 Load DSM, DEM and Greenspace Mask, and generate the observer location as
@@ -160,7 +158,7 @@ viewshed1 <- viewshed(sf_start = observer, dsm_data = DSM, dtm_data = DEM,
                       max_distance = 200, observer_height = 1.7, plot = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
 
 *Left: Digital Surface Model (DSM); Right: Viewshed, where green =
 visible and yellow = no-visible area.*
