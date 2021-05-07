@@ -11,9 +11,10 @@ vgvi_from_sf(
   greenspace,
   max_distance = 800,
   observer_height = 1.7,
-  resolution = NULL,
   m = 0.5,
   b = 8,
+  raster_res = NULL,
+  sf_res = raster_res,
   mode = c("logit", "exponential"),
   cores = 1,
   chunk_size = 999,
@@ -33,11 +34,14 @@ vgvi_from_sf(
 
 \item{observer_height}{numeric > 0; Height of the observer (e.g. 1.7 meters)}
 
-\item{resolution}{optional; NULL or numeric >= 1; Resolution that the GVI should be aggregated to}
-
 \item{m}{numeric; See ‘Details’}
 
 \item{b}{numeric; See ‘Details’}
+
+\item{raster_res}{optional; NULL or numeric >= 1; Resolution that the GVI raster should be aggregated to}
+
+\item{sf_res}{optional; numeric > 0; If \code{sf_start} is a linestring (or polygon), points on the line (or on a grid) will be generated. 
+The \code{sf_res} parameter sets the resolution of the points on the line/grid.}
 
 \item{mode}{character; 'logit' or 'exponential'. See ‘Details’}
 

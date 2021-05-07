@@ -9,9 +9,11 @@
 #' @param greenspace object of class \code{\link[terra]{SpatRaster}}; Binary \code{\link[terra]{SpatRaster}} of the Greenspace mask. Values must be 1 for Green and 0 for No-Green
 #' @param max_distance numeric; Buffer distance to calculate the viewshed
 #' @param observer_height numeric > 0; Height of the observer (e.g. 1.7 meters)
-#' @param resolution optional; NULL or numeric >= 1; Resolution that the GVI should be aggregated to
 #' @param m numeric; See ‘Details’
 #' @param b numeric; See ‘Details’
+#' @param raster_res optional; NULL or numeric >= 1; Resolution that the GVI raster should be aggregated to
+#' @param sf_res optional; numeric > 0; If \code{sf_start} is a linestring (or polygon), points on the line (or on a grid) will be generated. 
+#' The \code{sf_res} parameter sets the resolution of the points on the line/grid.
 #' @param mode character; 'logit' or 'exponential'. See ‘Details’
 #' @param cores numeric; The number of cores to use, i.e. at most how many child processes will be run simultaneously
 #' @param chunk_size numeric; Chunk size for parallelization. See ‘Details’ 
@@ -69,7 +71,7 @@
 
 vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
                          max_distance = 800, observer_height = 1.7, 
-                         resolution = NULL, m = 0.5, b = 8,
+                         m = 0.5, b = 8, raster_res = NULL, sf_res = raster_res,
                          mode = c("logit", "exponential"), 
                          cores = 1, chunk_size = 999, progress = TRUE) {
   
@@ -105,11 +107,16 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
     stop("greenspace needs to have the same CRS as sf_start")
   }
   
-  # resolution
-  if (is.null(resolution)) {
-    resolution = min(terra::res(dsm_data))
-  } else if (resolution < 1 || resolution < min(terra::res(dsm_data))) {
-    stop("If the resolution differs from dsm_data, it needs to be > 1 and higher than the dsm_data resolution")
+  # raster_res
+  if (is.null(raster_res)) {
+    raster_res = min(terra::res(dsm_data))
+  } else if (raster_res < 1 || raster_res < min(terra::res(dsm_data))) {
+    stop("If the raster_res differs from dsm_data, it needs to be > 1 and higher than the dsm_data raster_res")
+  }
+  
+  # sf_res
+  if (is.null(sf_res)) {
+    sf_res <- raster_res
   }
   
   #### 2. Convert sf_start to points ####
@@ -117,7 +124,7 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
     sf_start <- sf_start %>%
       sf::st_union() %>%
       sf::st_cast("LINESTRING") %>%
-      sf::st_line_sample(density = 1/resolution) %>%
+      sf::st_line_sample(density = 1/sf_res) %>%
       sf::st_cast("POINT") %>%
       sf::st_as_sf() %>% 
       dplyr::rename(geom = x)
@@ -125,8 +132,8 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
     sf_start_bbox <- sf::st_bbox(sf_start)
     sf_start <- terra::rast(xmin = sf_start_bbox[1], xmax = sf_start_bbox[3], 
                             ymin = sf_start_bbox[2], ymax = sf_start_bbox[4], 
-                            crs = terra::crs(dsm_data), resolution = resolution, vals = 0) %>% 
-      terra::crop(sf_start) %>% 
+                            crs = terra::crs(dsm_data), resolution = sf_res, vals = 0) %>% 
+      terra::crop(terra::vect(sf_start)) %>% 
       terra::mask(terra::vect(sf_start)) %>%
       terra::xyFromCell(which(terra::values(.) == 0)) %>%
       as.data.frame() %>% 
@@ -147,9 +154,9 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
   # Crop DSM to max AOI and change resolution
   dsm_data <- terra::crop(dsm_data, terra::vect(max_aoi))
   
-  if(resolution != min(raster::res(dsm_data))) {
+  if(raster_res != min(raster::res(dsm_data))) {
     terra::terraOptions(progress = 0)
-    dsm_data <- terra::aggregate(dsm_data, fact = resolution/terra::res(dsm_data))
+    dsm_data <- terra::aggregate(dsm_data, fact = raster_res/terra::res(dsm_data))
     terra::terraOptions(progress = 3)
   }
   
@@ -187,7 +194,7 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
         par_fun <-  function(i){
           viewshed_raster(this_aoi = this_aoi[i,], dsm_data = dsm_data,
                           x0 = this_x0[i], y0 = this_y0[i], height0 = this_height_0_vec[i],
-                          resolution = resolution, id = this_ids[i])
+                          resolution = raster_res, id = this_ids[i])
         }
         
         viewshed_list <- foreach::foreach(i=1:nrow(this_aoi)) %dopar% par_fun(i)
@@ -196,14 +203,14 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
         viewshed_list <- parallel::mclapply(1:nrow(this_aoi), function(i){
           viewshed_raster(this_aoi = this_aoi[i,], dsm_data = dsm_data,
                           x0 = this_x0[i], y0 = this_y0[i], height0 = this_height_0_vec[i],
-                          resolution = resolution, id = this_ids[i])},
+                          resolution = raster_res, id = this_ids[i])},
           mc.cores = cores, mc.preschedule = TRUE)
       }
     } else {
       viewshed_list <- lapply(1:nrow(this_aoi), function(i){
         viewshed_raster(this_aoi = this_aoi[i,], dsm_data = dsm_data,
                         x0 = this_x0[i], y0 = this_y0[i], height0 = this_height_0_vec[i],
-                        resolution = resolution, id = this_ids[i])})
+                        resolution = raster_res, id = this_ids[i])})
     }
     
     # Get id's from raster object (in case the order has been changed during parallelization)
