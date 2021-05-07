@@ -147,7 +147,7 @@ Compute the VGVI along the line feature. Since the resolution is 5 meters, point
 ```{r eval=FALSE}
 vgvi_sf <- vgvi_from_sf(sf_start = isodistance,
                         dsm_data = DSM, dtm_data = DEM, greenspace = GreenSpace, 
-                        max_distance = 200, observer_height = 1.7, resolution = 5, 
+                        max_distance = 200, observer_height = 1.7,
                         m = 1, b = 3, mode = "exponential", cores = 20, progress = FALSE)
 ```
 

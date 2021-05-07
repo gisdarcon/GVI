@@ -9,11 +9,11 @@
 #' @param greenspace object of class \code{\link[terra]{SpatRaster}}; Binary \code{\link[terra]{SpatRaster}} of the Greenspace mask. Values must be 1 for Green and 0 for No-Green
 #' @param max_distance numeric; Buffer distance to calculate the viewshed
 #' @param observer_height numeric > 0; Height of the observer (e.g. 1.7 meters)
-#' @param m numeric; See ‘Details’
-#' @param b numeric; See ‘Details’
 #' @param raster_res optional; NULL or numeric >= 1; Resolution that the GVI raster should be aggregated to
 #' @param sf_res optional; numeric > 0; If \code{sf_start} is a linestring (or polygon), points on the line (or on a grid) will be generated. 
 #' The \code{sf_res} parameter sets the resolution of the points on the line/grid.
+#' @param m numeric; See ‘Details’
+#' @param b numeric; See ‘Details’
 #' @param mode character; 'logit' or 'exponential'. See ‘Details’
 #' @param cores numeric; The number of cores to use, i.e. at most how many child processes will be run simultaneously
 #' @param chunk_size numeric; Chunk size for parallelization. See ‘Details’ 
@@ -71,8 +71,8 @@
 
 vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
                          max_distance = 800, observer_height = 1.7, 
-                         m = 0.5, b = 8, raster_res = NULL, sf_res = raster_res,
-                         mode = c("logit", "exponential"), 
+                         raster_res = NULL, sf_res = raster_res,
+                         m = 0.5, b = 8, mode = c("logit", "exponential"), 
                          cores = 1, chunk_size = 999, progress = TRUE) {
   
   #### 1. Check input ####
