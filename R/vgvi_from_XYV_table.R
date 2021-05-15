@@ -20,7 +20,7 @@ vgvi_from_XYV_table <- function(XYV_table, m = 0.5, b = 8, mode = c("logit", "ex
         return(1/(1 + (b * x^m)))
       } 
     } else {
-      stop("Currently only logit and exponential are supported.")
+      stop("Currently only logit and exponential are supported")
     }
     
     # Normalize distance

@@ -56,7 +56,7 @@ vgvi <- function(viewshed, greenspace, m = 0.5, b = 8, mode = c("logit", "expone
         return(1/(1 + (b * x^m)))
       } 
     } else {
-      stop("Currently only logit and exponential are supported.")
+      stop("Currently only logit and exponential are supported")
     }
     
     # Normalize distance

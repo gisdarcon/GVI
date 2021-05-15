@@ -49,19 +49,19 @@ viewshed <- function(sf_start, dsm_data, dtm_data,
   } else if (!as.character(sf::st_geometry_type(sf_start, by_geometry = FALSE)) == "POINT") {
     stop("sf_start has no valid geometry")
   } else if (nrow(sf_start) > 1) {
-    stop("The viewshed function can only calculate the viewshed of one point. Please look into the vgvi_from_sf function.")
+    stop("The viewshed function can only calculate the viewshed of one point. Please look into the vgvi_from_sf function")
   }
   
   # dsm_data
   if (!is(dsm_data, "SpatRaster")) {
-    stop("dsm_data needs to be a SpatRaster object!")
+    stop("dsm_data needs to be a SpatRaster object")
   } else if (sf::st_crs(terra::crs(dsm_data))$epsg != sf::st_crs(sf_start)$epsg) {
     stop("dsm_data needs to have the same CRS as sf_start")
   }
   
   # dtm_data
   if (!is(dsm_data, "SpatRaster")) {
-    stop("dtm_data needs to be a SpatRaster object!")
+    stop("dtm_data needs to be a SpatRaster object")
   } else if (sf::st_crs(terra::crs(dtm_data))$epsg != sf::st_crs(sf_start)$epsg) {
     stop("dtm_data needs to have the same CRS as sf_start")
   }

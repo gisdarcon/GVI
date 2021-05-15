@@ -34,7 +34,7 @@ visualizeWeights <- function(viewshed, m = 0.5, b = 8, mode = c("logit", "expone
     } 
     plot_main <- paste0("Mode: exponential\nm: ", m, "    b: ", b)
   } else {
-    stop("Currently only logit and exponential are supported.")
+    stop("Currently only logit and exponential are supported")
   }
   
   plot(logfun(seq(0, 1, length.out = max_dist)), type = "l", 
