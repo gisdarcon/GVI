@@ -198,12 +198,18 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
     dplyr::select(id, VGVI)
   
   # Convert to list
-  sf_start_list <- suppressWarnings(split(sf_start, seq(1, nrow(sf_start), chunk_size)))
+  sf_start_list <- suppressWarnings(
+    1:nrow(sf_start) %>%
+      split(seq(1, length(.), chunk_size))
+  )
   
   # Convert to Raster
   dsm_data <- raster::raster(dsm_data)
   
-  if (progress) setTxtProgressBar(pb, 4)
+  if (progress) {
+    setTxtProgressBar(pb, 4)
+    cat("\n")
+  }
   if (length(invalid_points) == 1) {
     message("1 point has been removed, because it was outside of the DSM or DTM")
   } else if (length(invalid_points) > 1) {
@@ -212,8 +218,9 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
   
   #### 6. Calculate viewsheds and VGVI ####
   if (progress) {
-    message("Computing VGVI:")
+    message(paste0("Computing VGVI for ", nrow(sf_start), " points:"))
     pb = txtProgressBar(min = 0, max = length(sf_start_list), initial = 0, style = 3)
+    start_time <- Sys.time()
   }
   if (cores > 1 && Sys.info()[["sysname"]] == "Windows") {
     cl <- parallel::makeCluster(cores)
@@ -221,7 +228,7 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
   }
   for (j in seq_along(sf_start_list)) {
     
-    this_aoi <- sf_start_list[[j]] %>% 
+    this_aoi <- sf_start[sf_start_list[[j]], ] %>% 
       sf::st_buffer(max_distance)
     this_ids <- this_aoi$id
     this_x0 <- x0[this_ids]
@@ -310,6 +317,11 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
   if (cores > 1 && Sys.info()[["sysname"]] == "Windows") {
     parallel::stopCluster(cl)
   }
-  
+  if (progress) {
+    cat("\n")
+    time_dif <- round(cores * (as.numeric(difftime(Sys.time(), start_time, units = "s")) / nrow(sf_start)), 2)
+    message(paste("Total runtime:", round(as.numeric(difftime(Sys.time(), start_time, units = "m")))), " mins")
+    message(paste("Average time for a single point:", time_dif, "secs"))
+  }
   return(sf_start)
 }
