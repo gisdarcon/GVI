@@ -45,6 +45,7 @@
 #' @importFrom sf st_bbox
 #' @importFrom sf st_buffer
 #' @importFrom sf st_coordinates
+#' @importFrom sf st_as_sfc
 #' @importFrom dplyr rename
 #' @importFrom dplyr mutate
 #' @importFrom dplyr relocate
@@ -119,6 +120,12 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
     sf_res <- raster_res
   }
   
+  
+  if(progress) {
+    message("Preprocessing:")
+    pb = txtProgressBar(min = 0, max = 4, initial = 0, style = 2)
+  }
+  
   #### 2. Convert sf_start to points ####
   if (as.character(sf::st_geometry_type(sf_start, by_geometry = FALSE)) %in% c("LINESTRING", "MULTILINESTRING")) {
     sf_start <- sf_start %>%
@@ -140,16 +147,14 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
       sf::st_as_sf(coords = c("x","y"), crs = sf::st_crs(sf_start)) %>% 
       dplyr::rename(geom = geometry)
   }
-  
-  sf_start <- sf_start %>% 
-    dplyr::mutate(VGVI = as.numeric(NA)) %>% 
-    dplyr::select(VGVI)
+  if (progress) setTxtProgressBar(pb, 1)
   
   #### 3. Prepare data for viewshed analysis ####
   # Max AOI
   max_aoi <- sf_start %>% 
-    sf::st_buffer(max_distance) %>% 
-    dplyr::mutate(id = 1:dplyr::n())
+    sf::st_bbox() %>% 
+    sf::st_as_sfc() %>% 
+    sf::st_buffer(max_distance)
   
   # Crop DSM to max AOI and change resolution
   dsm_data <- terra::crop(dsm_data, terra::vect(max_aoi))
@@ -167,22 +172,57 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
   # Observer heights
   height_0_vec <- unlist(terra::extract(dtm_data, cbind(x0, y0)), use.names = F) + observer_height
   
+  if (progress) setTxtProgressBar(pb, 2)
+  
+  #### 4. Remove points outside the DSM or DTM ####
+  invalid_points <- unique(c(
+    which(is.na(terra::extract(dsm_data, cbind(x0, y0)))), # points outside the DSM
+    which(is.na(height_0_vec)) # points outside the DTM
+  ))
+  
+  # Remove invalid points
+  if (length(invalid_points) > 0) {
+    sf_start <- sf_start[-invalid_points, ]
+    x0 <- x0[-invalid_points]
+    y0 <- y0[-invalid_points]
+    height_0_vec <- height_0_vec[-invalid_points]
+  }
+  
+  if (progress) setTxtProgressBar(pb, 3)
+  
+  #### 5. Last steps of PreProcessing ####
+  # Prepare sf_start for output
+  sf_start <- sf_start %>% 
+    dplyr::mutate(VGVI = as.numeric(NA),
+                  id = 1:dplyr::n()) %>% 
+    dplyr::select(id, VGVI)
+  
+  # Convert to list
+  sf_start_list <- suppressWarnings(split(sf_start, seq(1, nrow(sf_start), chunk_size)))
+  
   # Convert to Raster
   dsm_data <- raster::raster(dsm_data)
   
-  #### 4. Calculate viewsheds and VGVI ####
-  max_aoi_list <- suppressWarnings(split(max_aoi, seq(1, nrow(max_aoi), chunk_size)))
+  if (progress) setTxtProgressBar(pb, 4)
+  if (length(invalid_points) == 1) {
+    message("1 point has been removed, because it was outside of the DSM or DTM")
+  } else if (length(invalid_points) > 1) {
+    message(paste(length(invalid_points), "points have been removed, because they were outside of the DSM or DTM"))
+  }
   
+  #### 6. Calculate viewsheds and VGVI ####
   if (progress) {
-    pb = txtProgressBar(min = 0, max = length(max_aoi_list), initial = 0, style = 3)
+    message("Computing VGVI:")
+    pb = txtProgressBar(min = 0, max = length(sf_start_list), initial = 0, style = 3)
   }
   if (cores > 1 && Sys.info()[["sysname"]] == "Windows") {
     cl <- parallel::makeCluster(cores)
     doParallel::registerDoParallel(cl)
   }
-  for (j in seq_along(max_aoi_list)) {
+  for (j in seq_along(sf_start_list)) {
     
-    this_aoi <- max_aoi_list[[j]]
+    this_aoi <- sf_start_list[[j]] %>% 
+      sf::st_buffer(max_distance)
     this_ids <- this_aoi$id
     this_x0 <- x0[this_ids]
     this_y0 <- y0[this_ids]
@@ -262,7 +302,7 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
     }
     
     # Update sf_start
-    sf_start[this_ids,1] <- unlist(this_vgvis)
+    sf_start[this_ids,2] <- unlist(this_vgvis)
     
     # Update ProgressBar
     if (progress) setTxtProgressBar(pb, j)
