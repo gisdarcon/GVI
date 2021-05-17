@@ -146,9 +146,9 @@ Compute the VGVI along the line feature. Since the resolution is 5 meters, point
 
 ```{r eval=FALSE}
 vgvi_sf <- vgvi_from_sf(sf_start = isodistance,
-                        dsm_data = DSM, dtm_data = DEM, greenspace = GreenSpace, 
+                        dsm_path = DSM_tmp, dtm_path = DEM_tmp, greenspace_path = GS_tmp, 
                         max_distance = 200, observer_height = 1.7,
-                        m = 1, b = 3, mode = "exponential", cores = 20, progress = FALSE)
+                        m = 1, b = 3, mode = "exponential", cores = 12, progress = FALSE)
 ```
 
 ![](docs/VGVI_Isoline.png) *Output of the* `vgvi_from_sf` *function. Red points indicate low, green points indicate high values of VGVI. Paths and roads along the park tend to have high visible greenness, the road in the east has low visible greenness.*

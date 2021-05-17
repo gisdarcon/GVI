@@ -6,9 +6,9 @@
 \usage{
 vgvi_from_sf(
   sf_start,
-  dsm_data,
-  dtm_data,
-  greenspace,
+  dsm_path,
+  dtm_path,
+  greenspace_path,
   max_distance = 800,
   observer_height = 1.7,
   raster_res = NULL,
@@ -23,12 +23,6 @@ vgvi_from_sf(
 }
 \arguments{
 \item{sf_start}{object of class \code{sf}; See ‘Details’}
-
-\item{dsm_data}{object of class \code{\link[terra]{SpatRaster}}; \code{\link[terra]{SpatRaster}} of the DSM}
-
-\item{dtm_data}{object of class \code{\link[terra]{SpatRaster}}; \code{\link[terra]{SpatRaster}} of the DTM}
-
-\item{greenspace}{object of class \code{\link[terra]{SpatRaster}}; Binary \code{\link[terra]{SpatRaster}} of the Greenspace mask. Values must be 1 for Green and 0 for No-Green}
 
 \item{max_distance}{numeric; Buffer distance to calculate the viewshed}
 
@@ -50,6 +44,12 @@ The \code{sf_res} parameter sets the resolution of the points on the line/grid.}
 \item{chunk_size}{numeric; Chunk size for parallelization. See ‘Details’}
 
 \item{progress}{logical; Show progress bar?}
+
+\item{dsm_data}{object of class \code{\link[terra]{SpatRaster}}; \code{\link[terra]{SpatRaster}} of the DSM}
+
+\item{dtm_data}{object of class \code{\link[terra]{SpatRaster}}; \code{\link[terra]{SpatRaster}} of the DTM}
+
+\item{greenspace}{object of class \code{\link[terra]{SpatRaster}}; Binary \code{\link[terra]{SpatRaster}} of the Greenspace mask. Values must be 1 for Green and 0 for No-Green}
 }
 \value{
 sf_object containing the weighted VGVI values as POINT features, where 0 = no green cells are visible, and 1 = all of the visible cells are green.

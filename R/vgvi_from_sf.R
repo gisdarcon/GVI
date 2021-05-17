@@ -4,9 +4,9 @@
 #' A distance decay function is applied, to account for the reducing visual prominence of an object in space with increasing distance from the observer.
 #'
 #' @param sf_start object of class \code{sf}; See ‘Details’
-#' @param dsm_data object of class \code{\link[terra]{SpatRaster}}; \code{\link[terra]{SpatRaster}} of the DSM
-#' @param dtm_data object of class \code{\link[terra]{SpatRaster}}; \code{\link[terra]{SpatRaster}} of the DTM
-#' @param greenspace object of class \code{\link[terra]{SpatRaster}}; Binary \code{\link[terra]{SpatRaster}} of the Greenspace mask. Values must be 1 for Green and 0 for No-Green
+#' @param dsm_path character; File path to the DSM
+#' @param dtm_path character; File path to the DTM
+#' @param greenspace_path character; File path to the binary Greenspace mask. Values of the Greenspace mask must be 1 for Green and 0 for No-Green
 #' @param max_distance numeric; Buffer distance to calculate the viewshed
 #' @param observer_height numeric > 0; Height of the observer (e.g. 1.7 meters)
 #' @param raster_res optional; NULL or numeric >= 1; Resolution that the GVI raster should be aggregated to
@@ -61,8 +61,8 @@
 #' @importFrom terra aggregate
 #' @importFrom terra extract
 #' @importFrom terra cellFromXY
-#' @importFrom raster raster
-#' @importFrom raster as.raster
+#' @importFrom terra writeRaster
+#' @importFrom terra rast
 #' @importFrom methods is
 #' @importFrom utils txtProgressBar
 #' @importFrom utils setTxtProgressBar
@@ -70,11 +70,17 @@
 #' @importFrom foreach foreach
 #' @importFrom foreach %dopar%
 
-vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
-                         max_distance = 800, observer_height = 1.7, 
-                         raster_res = NULL, sf_res = raster_res,
-                         m = 0.5, b = 8, mode = c("logit", "exponential"), 
-                         cores = 1, chunk_size = 999, progress = TRUE) {
+vgvi_from_sf <- function(sf_start, dsm_path, dtm_path, greenspace_path,
+                          max_distance = 800, observer_height = 1.7, 
+                          raster_res = NULL, sf_res = raster_res,
+                          m = 0.5, b = 8, mode = c("logit", "exponential"), 
+                          cores = 1, chunk_size = 999, progress = TRUE) {
+  
+  # Load DTM and DSM
+  dsm_data <- terra::rast(dsm_path)
+  dtm_data <- terra::rast(dtm_path)
+  greenspace <- terra::rast(greenspace_path)
+  
   
   #### 1. Check input ####
   # sf_start
@@ -95,14 +101,14 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
   }
   
   # dtm_data
-  if (!is(dsm_data, "SpatRaster")) {
+  if (!is(dtm_data, "SpatRaster")) {
     stop("dtm_data needs to be a SpatRaster object!")
   } else if (sf::st_crs(terra::crs(dtm_data))$epsg != sf::st_crs(sf_start)$epsg) {
     stop("dtm_data needs to have the same CRS as sf_start")
   }
   
   # greenspace
-  if (!is(dsm_data, "SpatRaster")) {
+  if (!is(greenspace, "SpatRaster")) {
     stop("greenspace needs to be a SpatRaster object!")
   } else if (sf::st_crs(terra::crs(greenspace))$epsg != sf::st_crs(sf_start)$epsg) {
     stop("greenspace needs to have the same CRS as sf_start")
@@ -157,12 +163,16 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
     sf::st_buffer(max_distance)
   
   # Crop DSM to max AOI and change resolution
-  dsm_data <- terra::crop(dsm_data, terra::vect(max_aoi))
-  
   if(raster_res != min(raster::res(dsm_data))) {
+    dsm_data <- terra::crop(dsm_data, terra::vect(max_aoi))
+    
     terra::terraOptions(progress = 0)
     dsm_data <- terra::aggregate(dsm_data, fact = raster_res/terra::res(dsm_data))
     terra::terraOptions(progress = 3)
+    
+    # Overwrite dsm_path and save in tempDir
+    dsm_path <- tempfile("temp_dsm", fileext = ".tif")
+    terra::writeRaster(dsm_data, dsm_path)
   }
   
   # Coordinates of start point
@@ -203,9 +213,6 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
       split(seq(1, length(.), chunk_size))
   )
   
-  # Convert to Raster
-  dsm_data <- raster::raster(dsm_data)
-  
   if (progress) {
     setTxtProgressBar(pb, 4)
     cat("\n")
@@ -222,10 +229,12 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
     pb = txtProgressBar(min = 0, max = length(sf_start_list), initial = 0, style = 3)
     start_time <- Sys.time()
   }
+  
   if (cores > 1 && Sys.info()[["sysname"]] == "Windows") {
     cl <- parallel::makeCluster(cores)
     doParallel::registerDoParallel(cl)
   }
+  
   for (j in seq_along(sf_start_list)) {
     
     this_aoi <- sf_start[sf_start_list[[j]], ] %>% 
@@ -238,85 +247,43 @@ vgvi_from_sf <- function(sf_start, dsm_data, dtm_data, greenspace,
     #### Calculate viewshed
     if (cores > 1) {
       if (Sys.info()[["sysname"]] == "Windows") {
+        # Calculate VGVI in parallel
         par_fun <-  function(i){
-          viewshed_raster(this_aoi = this_aoi[i,], dsm_data = dsm_data,
-                          x0 = this_x0[i], y0 = this_y0[i], height0 = this_height_0_vec[i],
-                          resolution = raster_res, id = this_ids[i])
+          viewshed_vgvi(this_aoi = this_aoi[i,],
+                        dsm_path = dsm_path, greenspace_path = greenspace_path,
+                        x0 = this_x0[i], y0 = this_y0[i], height0 = this_height_0_vec[i],
+                        resolution = raster_res, m = m, b = b, mode = mode)
         }
         
-        viewshed_list <- foreach::foreach(i=1:nrow(this_aoi)) %dopar% par_fun(i)
+        vgvi_list <- foreach::foreach(i=1:nrow(this_aoi)) %dopar% par_fun(i)
       }
       else {
-        viewshed_list <- parallel::mclapply(1:nrow(this_aoi), function(i){
-          viewshed_raster(this_aoi = this_aoi[i,], dsm_data = dsm_data,
-                          x0 = this_x0[i], y0 = this_y0[i], height0 = this_height_0_vec[i],
-                          resolution = raster_res, id = this_ids[i])},
+        vgvi_list <- parallel::mclapply(1:nrow(this_aoi), function(i){
+          viewshed_vgvi(this_aoi = this_aoi[i,],
+                        dsm_path = dsm_path, greenspace_path = greenspace_path,
+                        x0 = this_x0[i], y0 = this_y0[i], height0 = this_height_0_vec[i],
+                        resolution = raster_res, m = m, b = b, mode = mode)},
           mc.cores = cores, mc.preschedule = TRUE)
       }
     } else {
-      viewshed_list <- lapply(1:nrow(this_aoi), function(i){
-        viewshed_raster(this_aoi = this_aoi[i,], dsm_data = dsm_data,
-                        x0 = this_x0[i], y0 = this_y0[i], height0 = this_height_0_vec[i],
-                        resolution = raster_res, id = this_ids[i])})
-    }
-    
-    # Get id's from raster object (in case the order has been changed during parallelization)
-    this_ids <- lapply(viewshed_list, names) %>% 
-      unlist() %>% 
-      gsub("X", "", .) %>% 
-      as.integer()
-    
-    # Convert to terra rast
-    viewshed_list <- lapply(viewshed_list, terra::rast)
-    
-    #### Calculate VGVI
-    # Calculate XY-visible (XYV) table
-    this_XYV_table_list <- lapply(viewshed_list, function(x){
-      # Get XY coordinates of visible cells
-      xy <- x %>% 
-        terra::xyFromCell(which(x[] == 1))
-      
-      # Calculate distance
-      centroid <- colMeans(terra::xyFromCell(x, which(!is.na(x[]))))
-      dxy = round(sqrt((centroid[1] - xy[,1])^2 + (centroid[2] - xy[,2])^2))
-      dxy[dxy==0] = min(dxy[dxy!=0])
-      
-      # Intersect XY with greenspace mask
-      output <- greenspace[terra::cellFromXY(greenspace, xy)] %>% 
-        unlist(use.names = FALSE) %>% 
-        cbind(dxy, .)
-      colnames(output) <- c("dxy", "visible")
-      return(output)
-    })
-    
-    # Compute VGVI
-    if (cores > 1) {
-      if (Sys.info()[["sysname"]] == "Windows") {
-        par_fun <-  function(i){
-          vgvi_from_XYV_table(XYV_table = i, m = m, b = b, mode = mode)
-        }
-        
-        this_vgvis <- foreach::foreach(i=this_XYV_table_list) %dopar% par_fun(i)
-      }
-      else {
-        this_vgvis <- parallel::mclapply(this_XYV_table_list, vgvi_from_XYV_table,
-                                         m = m, b = b, mode = mode,
-                                         mc.cores = cores, mc.preschedule = TRUE)
-      }
-    } else {
-      this_vgvis <- lapply(this_XYV_table_list, vgvi_from_XYV_table,
-                           m = m, b = b, mode = mode)
+      vgvi_list <- lapply(1:nrow(this_aoi), function(i){
+        viewshed_vgvi(this_aoi = this_aoi[i,],
+                      dsm_path = dsm_path, greenspace_path = greenspace_path,
+                      x0 = this_x0[i], y0 = this_y0[i], height0 = this_height_0_vec[i],
+                      resolution = raster_res,  m = m, b = b, mode = mode)})
     }
     
     # Update sf_start
-    sf_start[this_ids,2] <- unlist(this_vgvis)
+    sf_start[this_ids,2] <- unlist(vgvi_list, use.names = FALSE)
     
     # Update ProgressBar
     if (progress) setTxtProgressBar(pb, j)
   }
+  
   if (cores > 1 && Sys.info()[["sysname"]] == "Windows") {
     parallel::stopCluster(cl)
   }
+  
   if (progress) {
     cat("\n")
     time_dif <- round(cores * (as.numeric(difftime(Sys.time(), start_time, units = "s")) / nrow(sf_start)), 2)

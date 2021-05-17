@@ -187,9 +187,9 @@ meters, points along the line feature will be generated every 5 meters.
 
 ``` r
 vgvi_sf <- vgvi_from_sf(sf_start = isodistance,
-                        dsm_data = DSM, dtm_data = DEM, greenspace = GreenSpace, 
+                        dsm_path = DSM_tmp, dtm_path = DEM_tmp, greenspace_path = GS_tmp, 
                         max_distance = 200, observer_height = 1.7,
-                        m = 1, b = 3, mode = "exponential", cores = 20, progress = FALSE)
+                        m = 1, b = 3, mode = "exponential", cores = 12, progress = FALSE)
 ```
 
 ![](docs/VGVI_Isoline.png) *Output of the* `vgvi_from_sf` *function. Red
