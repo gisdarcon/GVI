@@ -28,7 +28,6 @@
 #' @importFrom terra colFromX
 #' @importFrom terra values
 #' @importFrom terra ncol
-#' @importFrom terra expand
 #' @importFrom terra boundaries
 #' @importFrom terra xyFromCell
 #' @importFrom terra plot
