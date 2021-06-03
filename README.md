@@ -1,7 +1,7 @@
 GVI — Work in Progress
 ================
 
-The `GVI` R package helps researchers compute the Green Visibility Index
+The `GVI` R package helps researchers compute the Greenness Visibility Index
 (GVI) presented by [Labib, Huck and Lindley
 (2021)](https://doi.org/10.1016/j.scitotenv.2020.143050). The GVI is
 calculated using a Digital Surface Model (DSM), Digital Terrain Model
