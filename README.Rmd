@@ -121,7 +121,7 @@ Calculate the viewshed for a 200 meters radius around the observers position at 
 
 ```{r message=FALSE, warning=FALSE, fig.height=5, fig.width=10}
 library(GVI)
-viewshed1 <- viewshed(sf_start = observer, dsm_data = DSM, dtm_data = DEM,
+viewshed1 <- viewshed(observer = observer, dsm_rast = DSM, dtm_rast = DEM,
                       max_distance = 200, observer_height = 1.7, plot = TRUE)
 ```
 
@@ -145,8 +145,8 @@ isodistance <- read_sf("https://github.com/STBrinkmann/data/raw/main/GVI_Data/is
 Compute the VGVI along the line feature. Since the resolution is 5 meters, points along the line feature will be generated every 5 meters.
 
 ```{r eval=FALSE}
-vgvi_sf <- vgvi_from_sf(sf_start = isodistance,
-                        dsm_path = DSM_tmp, dtm_path = DEM_tmp, greenspace_path = GS_tmp, 
+vgvi_sf <- vgvi_from_sf(observer = isodistance, 
+                        dsm_rast = DSM, dtm_rast = DEM, greenspace_rast = GreenSpace,
                         max_distance = 200, observer_height = 1.7,
                         m = 1, b = 3, mode = "exponential", cores = 12, progress = FALSE)
 ```
@@ -186,17 +186,3 @@ Bresenham, J.E. (1965): Algorithm for computer control of a digital plotter. IBM
 Bresenham, Jack (1977): A linear algorithm for incremental digital display of circular arcs. Commun. ACM 20, 2 (Feb. 1977), 100–106. doi: [10.1145/359423.359432](https://doi.org/10.1145/359423.359432).
 
 Labib, S.M., Jonny J. Huck, and Sarah Lindley (2021): Modelling and Mapping Eye-Level Greenness Visibility Exposure Using Multi-Source Data at High Spatial Resolutions. *Science of The Total Environment* 755 (February): 143050. doi: [j.scitotenv.2020.143050](https://doi.org/10.1016/j.scitotenv.2020.143050).
-
-# ToDO
-
--   ~~Thesis author section~~
-
--   ~~library(devtools)~~
-
--   ~~Sample data~~
-
--   Decay function
-
--   ~~Input check for all functions~~
-
--   ~~VGVI for multiple points, lines and polygons~~

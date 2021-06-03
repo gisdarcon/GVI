@@ -154,7 +154,7 @@ position at 1.7 meters height (eye level).
 
 ``` r
 library(GVI)
-viewshed1 <- viewshed(sf_start = observer, dsm_data = DSM, dtm_data = DEM,
+viewshed1 <- viewshed(observer = observer, dsm_rast = DSM, dtm_rast = DEM,
                       max_distance = 200, observer_height = 1.7, plot = TRUE)
 ```
 
@@ -186,8 +186,8 @@ Compute the VGVI along the line feature. Since the resolution is 5
 meters, points along the line feature will be generated every 5 meters.
 
 ``` r
-vgvi_sf <- vgvi_from_sf(sf_start = isodistance,
-                        dsm_path = DSM_tmp, dtm_path = DEM_tmp, greenspace_path = GS_tmp, 
+vgvi_sf <- vgvi_from_sf(observer = isodistance, 
+                        dsm_rast = DSM, dtm_rast = DEM, greenspace_rast = GreenSpace,
                         max_distance = 200, observer_height = 1.7,
                         m = 1, b = 3, mode = "exponential", cores = 12, progress = FALSE)
 ```
@@ -237,17 +237,3 @@ Mapping Eye-Level Greenness Visibility Exposure Using Multi-Source Data
 at High Spatial Resolutions. *Science of The Total Environment* 755
 (February): 143050. doi:
 [j.scitotenv.2020.143050](https://doi.org/10.1016/j.scitotenv.2020.143050).
-
-# ToDO
-
--   ~~Thesis author section~~
-
--   ~~library(devtools)~~
-
--   ~~Sample data~~
-
--   Decay function
-
--   ~~Input check for all functions~~
-
--   ~~VGVI for multiple points, lines and polygons~~
