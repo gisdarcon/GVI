@@ -19,7 +19,7 @@
 #' @importFrom stats integrate
 
 viewshed_vgvi <- function(this_aoi, dsm_path, greenspace_path, x0, y0,
-                           height0, resolution, m = 0.5, b = 8, mode = c("logit", "exponential")) {
+                          height0, resolution, m = 0.5, b = 8, mode = c("logit", "exponential")) {
   # Read DSM and Greenspace
   dsm_data <- terra::rast(dsm_path)
   greenspace <- terra::rast(greenspace_path)
