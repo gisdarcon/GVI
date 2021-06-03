@@ -5,9 +5,9 @@
 \title{Viewshed}
 \usage{
 viewshed(
-  sf_start,
-  dsm_data,
-  dtm_data,
+  observer,
+  dsm_rast,
+  dtm_rast,
   max_distance = 800,
   observer_height = 1.7,
   resolution = NULL,
@@ -15,19 +15,19 @@ viewshed(
 )
 }
 \arguments{
-\item{sf_start}{object of class \code{sf} with one point; Starting location}
+\item{observer}{object of class \code{sf} with one point; Starting location}
 
-\item{dsm_data}{object of class \code{\link[terra]{SpatRaster}}; \code{\link[terra]{SpatRaster}} of the DSM}
+\item{dsm_rast}{object of class \code{\link[terra]{SpatRaster}}; \code{\link[terra]{SpatRaster}} of the DSM}
 
-\item{dtm_data}{object of class \code{\link[terra]{SpatRaster}}; \code{\link[terra]{SpatRaster}} of the DTM}
+\item{dtm_rast}{object of class \code{\link[terra]{SpatRaster}}; \code{\link[terra]{SpatRaster}} of the DTM}
 
 \item{max_distance}{numeric; Buffer distance to calculate the viewshed}
 
 \item{observer_height}{numeric > 0; Height of the observer (e.g. 1.7 meters)}
 
-\item{resolution}{optional; numeric >= 1; Resolution that the GVI should be aggregated to}
+\item{resolution}{optional; NULL or numeric > 0; Resolution that the GVI raster should be aggregated to. Needs to be a multible of the dsm_rast resolution}
 
-\item{plot}{optional; Plot DSM and GVI}
+\item{plot}{optional; Plot the intersect of the buffer around the observer location and the DSM (left DSM; right visibility raster)}
 }
 \value{
 object of class \code{\link[terra]{SpatRaster}}
