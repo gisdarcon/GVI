@@ -1,8 +1,10 @@
-GVI — Work in Progress
-================
 
-The `GVI` R package helps researchers compute the Greenness Visibility Index
-(GVI) presented by [Labib, Huck and Lindley
+# GVI <a href='https://github.com/STBrinkmann/GVI'><img src='man/figures/logo.png' align="right" height="139" /></a>
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5060326.svg)](https://doi.org/10.5281/zenodo.5060326)
+
+The `GVI` R package helps researchers compute the Greenness Visibility
+Index (GVI) presented by [Labib, Huck and Lindley
 (2021)](https://doi.org/10.1016/j.scitotenv.2020.143050). The GVI is
 calculated using a Digital Surface Model (DSM), Digital Terrain Model
 (DTM) and Greenness Raster. `GVI` is written in C++ to provide fast and
@@ -16,7 +18,9 @@ light weighted functionality.
 
 -   [Examples](https://github.com/STBrinkmann/GVI#examples)
 
-# Functions
+-   [Citation](https://github.com/STBrinkmann/GVI#citation)
+
+## Functions
 
 | Function                                                                                                | Description                                                                                       |
 |---------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
@@ -25,7 +29,7 @@ light weighted functionality.
 | [*visualizeWeights*](https://github.com/STBrinkmann/GVI#visualize-weights)                              | Helper function, to adjust spatial weight parameters in the *vgvi* and *vgvi\_from\_sf* functions |
 | [*vgvi\_from\_sf*](https://github.com/STBrinkmann/GVI#viewshed-greenness-visibility-index-vgvi-from-sf) | Combines the *viewshed* and *vgvi* functions; Supports multiple points, lines or polygons         |
 
-# Installation
+## Installation
 
 1.  Install [R](https://cran.r-project.org/)
 
@@ -47,12 +51,12 @@ light weighted functionality.
         version of `GVI` from GitHub with:  
         `remotes::install_git("https://github.com/STBrinkmann/GVI")`
 
-# Methods
+## Methods
 
-## Viewshed
+### Viewshed
 
 The `viewshed` function computes the viewshed of a single point on a
-Digital Surface Model raster. A buffer is applied on the observer
+Digital Surface Model (DSM) raster. A buffer is applied on the observer
 position, and for every point on the perimeter a Line of Sight (LoS) is
 being calculated. Visibility along every point on the LoS is computed
 using a C++ implementation of Bresenham’s line algorithm \[[Bresenham
@@ -61,7 +65,7 @@ using a C++ implementation of Bresenham’s line algorithm \[[Bresenham
 result of the `viewshed` function is a radial raster where 0 =
 no-visible and 1 = visible area.
 
-## Viewshed Greenness Visibility Index (VGVI)
+### Viewshed Greenness Visibility Index (VGVI)
 
 The VGVI expresses the proportion of visible greenness to the total
 visible area based on a viewshed. The estimated VGVI values range
@@ -76,7 +80,7 @@ two options are supported, a logistic and an exponential function.
 
 ![ \\begin{align\*} f(x) = \\cfrac{1}{1 + e^{b(x-m)}} && \\text{(logistic)}\\\\ f(x) = \\cfrac{1}{1 + (bx^{m})} && \\text{(exponential)} \\end{align\*} ](https://latex.codecogs.com/svg.latex?%20%5Cbegin%7Balign%2A%7D%20f%28x%29%20%3D%20%5Ccfrac%7B1%7D%7B1%20%2B%20e%5E%7Bb%28x-m%29%7D%7D%20%26%26%20%5Ctext%7B%28logistic%29%7D%5C%5C%20f%28x%29%20%3D%20%5Ccfrac%7B1%7D%7B1%20%2B%20%28bx%5E%7Bm%7D%29%7D%20%26%26%20%5Ctext%7B%28exponential%29%7D%20%5Cend%7Balign%2A%7D%20 " \begin{align*} f(x) = \cfrac{1}{1 + e^{b(x-m)}} && \text{(logistic)}\\ f(x) = \cfrac{1}{1 + (bx^{m})} && \text{(exponential)} \end{align*} ")
 
-## Visualize Weights
+### Visualize Weights
 
 The `visualizeWeights` function helps to adjust spatial weight
 parameters *m* and *b* used in the `vgvi` and `vgvi_from_sf` functions.
@@ -87,7 +91,7 @@ parameters *m* and *b* used in the `vgvi` and `vgvi_from_sf` functions.
 parameterize the decay weights of a logistic (left) and an exponential
 (right) function.*
 
-## Viewshed Greenness Visibility Index (VGVI) from sf
+### Viewshed Greenness Visibility Index (VGVI) from sf
 
 The `vgvi_from_sf` function combines the `viewshed` and `vgvi`
 functions. The input of the observer location is an
@@ -99,9 +103,11 @@ single sf point object containing the VGVI for every point. This
 function supports parallel computation on Windows, Linux and MacOS,
 however it is highly recommended to use Linux or MacOS.
 
-# Examples
+## Examples
 
-For the examples we will use a [Digital Elevation Model
+### Data
+
+For the first two examples we will use a [Digital Elevation Model
 (DEM)](https://opendata.vancouver.ca/explore/dataset/digital-elevation-model),
 a binary Greenspace Mask based on a [land cover
 classification](http://www.metrovancouver.org/data) and a Digital
@@ -149,6 +155,8 @@ GreenSpace <- rast(GS_tmp)
 observer <- st_sf(sf_point(c(492243.3, 5454231.4)), crs = st_crs(26910))
 ```
 
+### 1. Single Point
+
 Calculate the viewshed for a 200 meters radius around the observers
 position at 1.7 meters height (eye level).
 
@@ -172,6 +180,8 @@ vgvi(viewshed = viewshed1, greenspace = GreenSpace, m = 0.5, b = 8)
 
 The output of 0.58 indicates, that \~58% of the visible area, within a
 200 meters radius, is green.
+
+## 2. Road Network
 
 We also provide sample data of a sf line feature to demonstrate the
 `vgvi_from_sf` function. This feature represents roads and paths, that
@@ -197,16 +207,46 @@ points indicate low, green points indicate high values of VGVI. Paths
 and roads along the park tend to have high visible greenness, the road
 in the east has low visible greenness.*
 
-# About
+### 3. Large Area of Interest
 
-## Package contributors
+Often researchers need to compute the VGVI for a large study area,
+therefore we have provided a sample workflow for the City of Vancouver.
+Since this workflow is extensive, we have uploaded it on an external
+website (will be published on 6.7.2021).
+
+## About
+
+### Citation
+
+Run this command to get info on how to cite this package.
+
+``` r
+citation("GVI")
+#> 
+#> To cite GVI in publications use:
+#> 
+#>   Sebastian T. Brinkmann, S.M. Labib (2021). GVI: Greenness Visibility
+#>   Index R package. Zenodo. doi: http://doi.org/10.5281/zenodo.5060326.
+#> 
+#> A BibTeX entry for LaTeX users is
+#> 
+#>   @Article{,
+#>     author = {Sebastian T. Brinkmann and S.M. Labib},
+#>     title = {GVI: Greenness Visibility Index R package},
+#>     journal = {Zenodo},
+#>     year = {2021},
+#>     url = {https://doi.org/10.5281/zenodo.5060325},
+#>   }
+```
+
+### Package contributors
 
 Brinkmann, Sebastian (Creator and author) e-mail:
 <sebastian.brinkmann@fau.de>
 
 S.M. Labib (Author) e-mail: <sml80@medschl.cam.ac.uk>
 
-## Thesis authors
+### Thesis authors
 
 S.M. Labib (1, 2\*)  
 Jonny J. Huck (1)  
@@ -222,7 +262,7 @@ United Kingdom.
 
 \*corresponding author
 
-# Bibliography
+## Bibliography
 
 Bresenham, J.E. (1965): Algorithm for computer control of a digital
 plotter. IBM Systems Journal, vol. 4, no. 1, pp. 25-30, doi:
