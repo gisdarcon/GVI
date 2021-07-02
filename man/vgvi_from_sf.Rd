@@ -18,7 +18,7 @@ vgvi_from_sf(
   mode = c("logit", "exponential"),
   cores = 1,
   chunk_size = 999,
-  file_path = NULL,
+  folder_path = NULL,
   progress = TRUE
 )
 }
@@ -50,7 +50,7 @@ The \code{spacing} parameter sets the distance in between the points on the line
 
 \item{chunk_size}{numeric; Chunk size for parallelization. See ‘Details’}
 
-\item{file_path}{optional; Filepath to where the output should be saved continuously}
+\item{folder_path}{optional; Folder path to where the output should be saved continuously. Must not inklude a filename extension (e.g. '.shp', '.gpkg').}
 
 \item{progress}{logical; Show progress bar and computation time?}
 }
