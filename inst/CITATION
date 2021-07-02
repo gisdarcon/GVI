@@ -1,0 +1,16 @@
+citHeader("To cite GVI in publications use:")
+
+citEntry(
+  entry = "Article",
+  author = personList(as.person("Sebastian T. Brinkmann"), as.person("S.M. Labib")),
+  title = "GVI: Greenness Visibility Index R package",
+  journal = "Zenodo",
+  year = 2021,
+  url = "https://doi.org/10.5281/zenodo.5060325",
+  textVersion = paste(
+  "Sebastian T. Brinkmann, S.M. Labib (2021).",
+  "GVI: Greenness Visibility Index R package.",
+  "Zenodo.",
+  "doi: http://doi.org/10.5281/zenodo.5060326."
+  )
+)
