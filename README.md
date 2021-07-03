@@ -244,7 +244,7 @@ citation("GVI")
 Brinkmann, Sebastian (Creator and author) e-mail:
 <sebastian.brinkmann@fau.de>
 
-Dr S.M. Labib (Author) e-mail: <sml80@medschl.cam.ac.uk>
+Dr. S.M. Labib (Author) e-mail: <sml80@medschl.cam.ac.uk>
 
 ### Thesis authors
 
