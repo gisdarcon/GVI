@@ -211,8 +211,8 @@ in the east has low visible greenness.*
 
 Often researchers need to compute the VGVI for a large study area,
 therefore we have provided a sample workflow for the City of Vancouver.
-Since this workflow is extensive, we have uploaded it on an external
-website (will be published on 6.7.2021).
+Since this workflow is extensive, we have uploaded it on an [external
+website](https://geobrinkmann.com/post/visible-greenness-exposure-index-an-example-workflow-for-the-city-of-vancouver/).
 
 ## About
 
