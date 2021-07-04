@@ -1,5 +1,5 @@
 
-# GVI: Greenness Visibility Index <a href='https://github.com/STBrinkmann/GVI'><img src='man/figures/logo.png' align="right" height="139" /></a>
+# GVI: Greenness Visibility Index [<img src="man/figures/logo.png" align="right" height="139"/>](https://github.com/STBrinkmann/GVI)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5060326.svg)](https://doi.org/10.5281/zenodo.5060326)
 
