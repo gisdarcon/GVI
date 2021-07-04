@@ -1,7 +1,7 @@
 
 # GVI: Greenness Visibility Index [<img src="man/figures/logo.png" align="right" height="139"/>](https://github.com/STBrinkmann/GVI)
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5060326.svg)](https://doi.org/10.5281/zenodo.5060326)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5068835.svg)](https://doi.org/10.5281/zenodo.5068835)
 
 The `GVI` R package helps researchers compute the Greenness Visibility
 Index (GVI) presented by [Labib, Huck and Lindley
