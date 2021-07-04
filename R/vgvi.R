@@ -34,7 +34,8 @@ vgvi <- function(viewshed, greenspace, m = 0.5, b = 8, mode = c("logit", "expone
   # Intersect XY with greenspace mask
   output <- greenspace[terra::cellFromXY(greenspace, xy)] %>% 
     unlist(use.names = FALSE) %>% 
-    cbind(dxy, .)
+    cbind(dxy, .) %>% 
+    na.omit()
   colnames(output) <- c("dxy", "visible")
   
   # Get number of green visible cells and total visible cells per distance
