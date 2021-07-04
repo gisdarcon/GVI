@@ -73,7 +73,8 @@ viewshed_vgvi <- function(this_aoi, dsm_path, greenspace_path, x0, y0,
   # Intersect XY with greenspace mask
   output <- greenspace[terra::cellFromXY(greenspace, xy)] %>% 
     unlist(use.names = FALSE) %>% 
-    cbind(dxy, .)
+    cbind(dxy, .) %>% 
+    na.omit()
   colnames(output) <- c("dxy", "visible")
   
   # Get number of green visible cells and total visible cells per distance
