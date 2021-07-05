@@ -246,7 +246,7 @@ Brinkmann, Sebastian (Creator and author) e-mail:
 
 Dr. S.M. Labib (Author) e-mail: <sml80@medschl.cam.ac.uk>
 
-### Thesis authors
+### Paper authors
 
 S.M. Labib (1, 2\*)  
 Jonny J. Huck (1)  
