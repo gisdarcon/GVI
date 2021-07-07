@@ -3,7 +3,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5068835.svg)](https://doi.org/10.5281/zenodo.5068835)
 [![jonnyhuck Python
-Library](https://badgen.net/badge/jonnyhuck/Python%20Library/blue?icon=github)](https://github.com/labiblm/green-visibility-index)
+Library](https://badgen.net/badge/jonnyhuck/Python%20Library/blue?icon=github)](https://github.com/jonnyhuck/green-visibility-index)
 
 The `GVI` R package helps researchers compute the Greenness Visibility
 Index (GVI) presented by [Labib, Huck and Lindley
