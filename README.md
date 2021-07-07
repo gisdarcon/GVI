@@ -2,6 +2,8 @@
 # GVI: Greenness Visibility Index [<img src="man/figures/logo.png" align="right" height="139"/>](https://github.com/STBrinkmann/GVI)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5068835.svg)](https://doi.org/10.5281/zenodo.5068835)
+[![jonnyhuck Python
+Library](https://badgen.net/badge/jonnyhuck/Python%20Library/blue?icon=github)](https://github.com/labiblm/green-visibility-index)
 
 The `GVI` R package helps researchers compute the Greenness Visibility
 Index (GVI) presented by [Labib, Huck and Lindley
@@ -10,24 +12,27 @@ calculated using a Digital Surface Model (DSM), Digital Terrain Model
 (DTM) and Greenness Raster. `GVI` is written in C++ to provide fast and
 light weighted functionality.
 
--   [Functions](https://github.com/STBrinkmann/GVI#functions)
+-   [Functions](#functions)
 
--   [Installation](https://github.com/STBrinkmann/GVI#installation)
+-   [Installation](#installation)
 
--   [Methods](https://github.com/STBrinkmann/GVI#methods)
+-   [Methods](#methods)
 
--   [Examples](https://github.com/STBrinkmann/GVI#examples)
+-   [Examples](#examples)
 
--   [Citation](https://github.com/STBrinkmann/GVI#citation)
+-   [Citation](#citation)
+
+GVI can also be computed in Python, by [Jonny
+Huck](https://github.com/jonnyhuck/green-visibility-index)
 
 ## Functions
 
-| Function                                                                                                | Description                                                                                       |
-|---------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| [*viewshed*](https://github.com/STBrinkmann/GVI#viewshed)                                               | Computes the viewshed of a single point on a Digital Surface Model                                |
-| [*vgvi*](https://github.com/STBrinkmann/GVI#viewshed-greenness-visibility-index-vgvi)                   | Computes the Viewshed Greenness Visibility Index (VGVI) based on a viewshed                       |
-| [*visualizeWeights*](https://github.com/STBrinkmann/GVI#visualize-weights)                              | Helper function, to adjust spatial weight parameters in the *vgvi* and *vgvi\_from\_sf* functions |
-| [*vgvi\_from\_sf*](https://github.com/STBrinkmann/GVI#viewshed-greenness-visibility-index-vgvi-from-sf) | Combines the *viewshed* and *vgvi* functions; Supports multiple points, lines or polygons         |
+| Function                                                              | Description                                                                                       |
+|-----------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| [*viewshed*](#viewshed)                                               | Computes the viewshed of a single point on a Digital Surface Model                                |
+| [*vgvi*](#viewshed-greenness-visibility-index-vgvi)                   | Computes the Viewshed Greenness Visibility Index (VGVI) based on a viewshed                       |
+| [*visualizeWeights*](#visualize-weights)                              | Helper function, to adjust spatial weight parameters in the *vgvi* and *vgvi\_from\_sf* functions |
+| [*vgvi\_from\_sf*](#viewshed-greenness-visibility-index-vgvi-from-sf) | Combines the *viewshed* and *vgvi* functions; Supports multiple points, lines or polygons         |
 
 ## Installation
 
